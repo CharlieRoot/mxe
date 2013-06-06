@@ -1,0 +1,14 @@
+diff --git a/src/gui/Qt5GuiConfigExtras.cmake.in b/src/gui/Qt5GuiConfigExtras.cmake.in
+index f1bc441..1643dda 100644
+--- a/src/gui/Qt5GuiConfigExtras.cmake.in
++++ b/src/gui/Qt5GuiConfigExtras.cmake.in
+@@ -75,7 +75,7 @@ macro(_qt5gui_find_extra_libs Name Libs LibDir IncDirs)
+         if (NOT TARGET Qt5::Gui_${_cmake_lib_name})
+             find_library(Qt5Gui_${_cmake_lib_name}_LIBRARY ${_lib}
+ !!IF !isEmpty(CROSS_COMPILE)
+-                PATHS \"${LibDir}\" NO_DEFAULT_PATH
++                PATHS \"${LibDir}\"
+ !!ENDIF
+             )
+ !!IF mac
+

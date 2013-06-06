@@ -30,7 +30,8 @@ define $(PKG)_BUILD
             -device-option PKG_CONFIG='${TARGET}-pkg-config' \
             -force-pkg-config \
             -release \
-            -static \
+            -shared \
+            -optimized-qmake \
             -prefix '$(PREFIX)/$(TARGET)/qt5' \
             -icu \
             -opengl desktop \
