@@ -8,7 +8,7 @@ $(PKG)_CHECKSUM := e6dd1b62ceed0a51add3dda6f3fc3ce0f636a7f3
 $(PKG)_SUBDIR   := boost_$(subst .,_,$($(PKG)_VERSION))
 $(PKG)_FILE     := boost_$(subst .,_,$($(PKG)_VERSION)).tar.bz2
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/boost/boost/$($(PKG)_VERSION)/$($(PKG)_FILE)
-$(PKG)_DEPS     := gcc zlib bzip2 expat
+$(PKG)_DEPS     := gcc zlib bzip2 expat icu4c
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'http://www.boost.org/users/download/' | \
@@ -31,7 +31,7 @@ define $(PKG)_BUILD
         --user-config=user-config.jam \
         target-os=windows \
         threading=multi \
-        link=static \
+        link=static,shared \
         threadapi=win32 \
         --layout=tagged \
         --without-mpi \
@@ -42,6 +42,9 @@ define $(PKG)_BUILD
         --includedir='$(PREFIX)/$(TARGET)/include' \
         -sEXPAT_INCLUDE='$(PREFIX)/$(TARGET)/include' \
         -sEXPAT_LIBPATH='$(PREFIX)/$(TARGET)/lib' \
+        -sHAVE_ICU=1 \
+        -sICU_PATH='$(PREFIX)/$(TARGET)' \
+        -sICU_LINK="-L$(PREFIX)/$(TARGET)/lib -licuin -licuuc -licudt" \
         stage install
 
     '$(TARGET)-g++' \
