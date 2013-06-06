@@ -25,8 +25,11 @@ define $(PKG)_BUILD
         --build="`config.guess`" \
         --prefix='$(PREFIX)/$(TARGET)' \
         --enable-static \
-        --disable-shared \
+        --enable-shared \
+        --disable-debug \
         --with-cross-build='$(1).native' \
+        --mandir='$(1)/../build-native/sink' \
+        --docdir='$(1)/../build-native/sink' \
         CFLAGS=-DU_USING_ICU_NAMESPACE=0 \
         SHELL=bash
 
