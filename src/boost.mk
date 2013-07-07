@@ -29,6 +29,7 @@ define $(PKG)_BUILD
         -j '$(JOBS)' \
         --ignore-site-config \
         --user-config=user-config.jam \
+        cxxflags=-std=gnu++11 \
         target-os=windows \
         threading=multi \
         link=static,shared \
