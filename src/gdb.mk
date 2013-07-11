@@ -18,6 +18,13 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
+    mkdir '$(1).native' && cd '$(1).native' && '$(1)/configure' \
+        --target='$(TARGET)' \
+        --prefix='$(PREFIX)' \
+        CC=gcc CXX=g++ 
+    $(MAKE) -C '$(1).native' -j '$(JOBS)'
+    $(MAKE) -C '$(1).native' -j 1 install
+    
     cd '$(1)' && ./configure \
         --host='$(TARGET)' \
         --build="`config.guess`" \
