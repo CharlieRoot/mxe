@@ -46,7 +46,7 @@ define $(PKG)_CONFIGURE
         --with-gnu-ld \
         --with-gnu-as \
         --disable-nls \
-        --disable-shared \
+        --enable-shared \
         --disable-multilib \
         --without-x \
         --disable-win32-registry \
