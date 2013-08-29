@@ -74,5 +74,5 @@ define $(PKG)_BUILD
         -W -Wall -Werror -std=c++0x -pedantic \
         '$(TOP_DIR)/src/qt-test.cpp' -o '$(PREFIX)/$(TARGET)/bin/test-$(PKG)-pkgconfig.exe' \
         -I'$(1)/test-$(PKG)-pkgconfig' \
-        `'$(TARGET)-pkg-config' Qt5Widgets --cflags --libs`
+        `'$(TARGET)-pkg-config' Qt5Widgets --cflags --libs-only-l --libs-only-L`
 endef
