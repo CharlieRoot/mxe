@@ -1,0 +1,13 @@
+diff --git a/readline/util.c b/readline/util.c
+index 6c68ad8..321dee2 100644
+--- a/readline/util.c
++++ b/readline/util.c
+@@ -389,7 +389,7 @@ _rl_strnicmp (string1, string2, count)
+         break;
+       s2++;
+     }
+-  while (--count != 0)
++  while (--count != 0);
+ 
+   return (0);
+ }
