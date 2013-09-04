@@ -31,24 +31,6 @@ rm -f w32api-3.14-mingw32-dev.tar.gz MinGW-gcc440_1.zip 'ddraw.h?revision=987475
 #--------------------------------------------------------------------#
 
 
-diff -ruN a/include/amvideo.h b/include/amvideo.h
---- a/include/amvideo.h	2009-11-21 06:31:42.000000000 +0100
-+++ b/include/amvideo.h	2010-04-25 20:35:52.184124176 +0200
-@@ -52,10 +52,10 @@
- 	BITMAPINFOHEADER bmiHeader;
- } VIDEOINFOHEADER;
- typedef struct tagVIDEOINFO {
--	RECT rcSource,
--	RECT rcTarget,
--	DWORD dwBitRate,
--	DWORD dwBitErrorRate,
-+	RECT rcSource;
-+	RECT rcTarget;
-+	DWORD dwBitRate;
-+	DWORD dwBitErrorRate;
- 	REFERENCE_TIME AvgTimePerFrame;
- 	BITMAPINFOHEADER bmiHeader;
- 	union {
 diff -ruN a/include/control.h b/include/control.h
 --- a/include/control.h	2009-11-21 06:31:43.000000000 +0100
 +++ b/include/control.h	2010-04-25 20:35:52.184124176 +0200
