@@ -28,8 +28,8 @@ define $(PKG)_BUILD
         --enable-shared \
         --disable-debug \
         --with-cross-build='$(1).native' \
-        --mandir='$(1)/../build-native/sink' \
-        --docdir='$(1)/../build-native/sink' \
+        --mandir='$(1)/../$(1).native/sink' \
+        --docdir='$(1)/../$(1).native/sink' \
         CFLAGS=-DU_USING_ICU_NAMESPACE=0 \
         SHELL=bash
 
