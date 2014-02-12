@@ -3,12 +3,12 @@
 
 PKG             := boost
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.53.0
-$(PKG)_CHECKSUM := e6dd1b62ceed0a51add3dda6f3fc3ce0f636a7f3
+$(PKG)_VERSION  := 1.55.0
+$(PKG)_CHECKSUM := cef9a0cc7084b1d639e06cd3bc34e4251524c840
 $(PKG)_SUBDIR   := boost_$(subst .,_,$($(PKG)_VERSION))
 $(PKG)_FILE     := boost_$(subst .,_,$($(PKG)_VERSION)).tar.bz2
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/boost/boost/$($(PKG)_VERSION)/$($(PKG)_FILE)
-$(PKG)_DEPS     := gcc zlib bzip2 expat
+$(PKG)_DEPS     := gcc zlib bzip2 expat icu4c
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'http://www.boost.org/users/download/' | \
@@ -18,8 +18,6 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
-    # context switched library introduced in boost 1.51.0 does not build
-    rm -r '$(1)/libs/context'
     # old version appears to interfere
     rm -rf '$(PREFIX)/$(TARGET)/include/boost/'
     echo 'using gcc : : $(TARGET)-g++ : <rc>$(TARGET)-windres <archiver>$(TARGET)-ar <ranlib>$(TARGET)-ranlib ;' > '$(1)/user-config.jam'
@@ -29,11 +27,16 @@ define $(PKG)_BUILD
         -j '$(JOBS)' \
         --ignore-site-config \
         --user-config=user-config.jam \
+        cxxflags=-std=gnu++11 \
         target-os=windows \
         threading=multi \
-        link=static \
+        $(if $(BUILD_STATIC), \
+            link=static , \
+            link=shared ) \
         threadapi=win32 \
         --layout=tagged \
+        --without-context \
+        --without-coroutine \
         --without-mpi \
         --without-python \
         --prefix='$(PREFIX)/$(TARGET)' \
@@ -42,6 +45,9 @@ define $(PKG)_BUILD
         --includedir='$(PREFIX)/$(TARGET)/include' \
         -sEXPAT_INCLUDE='$(PREFIX)/$(TARGET)/include' \
         -sEXPAT_LIBPATH='$(PREFIX)/$(TARGET)/lib' \
+        -sHAVE_ICU=1 \
+        -sICU_PATH='$(PREFIX)/$(TARGET)' \
+        -sICU_LINK="-L$(PREFIX)/$(TARGET)/lib -licuin -licuuc -licudt" \
         stage install
 
     '$(TARGET)-g++' \
