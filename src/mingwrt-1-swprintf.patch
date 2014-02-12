@@ -1,0 +1,50 @@
+--- a/include/wchar.h	Sat Jun 30 07:22:58 2012
++++ b/include/wchar.h	Fri Aug 24 20:56:10 2012
+@@ -113,11 +113,17 @@
+ _CRTIMP wint_t __cdecl __MINGW_NOTHROW	fputwc (wchar_t, FILE*);
+ _CRTIMP wint_t __cdecl __MINGW_NOTHROW	ungetwc (wchar_t, FILE*);
+ 
+-/* These differ from the ISO C prototypes, which have a maxlen parameter like snprintf.  */
+-#ifndef __STRICT_ANSI__
+-_CRTIMP int __cdecl __MINGW_NOTHROW	swprintf (wchar_t*, const wchar_t*, ...);
+-_CRTIMP int __cdecl __MINGW_NOTHROW	vswprintf (wchar_t*, const wchar_t*, __VALIST);
+-#endif
++__CRT_INLINE int __cdecl __MINGW_NOTHROW swprintf (wchar_t* buffer, size_t count, const wchar_t* format, ...)
++{
++  __builtin_va_list argptr;
++  __builtin_va_start(argptr, format);
++  return _vsnwprintf(buffer, count, format, argptr);
++}
++
++__CRT_INLINE int __cdecl __MINGW_NOTHROW vswprintf (wchar_t* buffer, size_t count, const wchar_t* format, __VALIST argptr)
++{
++  return _vsnwprintf(buffer, count, format, argptr);
++}
+ 
+ #ifdef __MSVCRT__
+ _CRTIMP wchar_t* __cdecl __MINGW_NOTHROW fgetws (wchar_t*, int, FILE*);
+--- a/include/stdio.h	Sat Jun 30 07:22:56 2012
++++ b/include/stdio.h	Fri Aug 24 20:56:26 2012
+@@ -574,11 +574,17 @@
+ _CRTIMP wint_t __cdecl __MINGW_NOTHROW	fputwc (wchar_t, FILE*);
+ _CRTIMP wint_t __cdecl __MINGW_NOTHROW	ungetwc (wchar_t, FILE*);
+ 
+-/* These differ from the ISO C prototypes, which have a maxlen parameter (like snprintf).  */
+-#ifndef __STRICT_ANSI__
+-_CRTIMP int __cdecl __MINGW_NOTHROW	swprintf (wchar_t*, const wchar_t*, ...);
+-_CRTIMP int __cdecl __MINGW_NOTHROW	vswprintf (wchar_t*, const wchar_t*, __VALIST);
+-#endif
++__CRT_INLINE int __cdecl __MINGW_NOTHROW swprintf (wchar_t* buffer, size_t count, const wchar_t* format, ...)
++{
++  __builtin_va_list argptr;
++  __builtin_va_start(argptr, format);
++  return _vsnwprintf(buffer, count, format, argptr);
++}
++
++__CRT_INLINE int __cdecl __MINGW_NOTHROW vswprintf (wchar_t* buffer, size_t count, const wchar_t* format, __VALIST argptr)
++{
++  return _vsnwprintf(buffer, count, format, argptr);
++}
+ 
+ #ifdef __MSVCRT__ 
+ _CRTIMP wchar_t* __cdecl __MINGW_NOTHROW fgetws (wchar_t*, int, FILE*);
