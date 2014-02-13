@@ -1,0 +1,9 @@
+--- a/src/platformsupport/fontdatabases/fontdatabases.pri
++++ b/src/platformsupport/fontdatabases/fontdatabases.pri
+@@ -1,4 +1,4 @@
+-!win32|contains(QT_CONFIG, freetype):!mac {
++!win32|contains(QT_CONFIG, freetype)|contains(QT_CONFIG, system-freetype):!mac {
+     include($$PWD/basic/basic.pri)
+ }
+ 
+

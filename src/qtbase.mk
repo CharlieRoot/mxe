@@ -28,9 +28,13 @@ define $(PKG)_BUILD
             -xplatform win32-g++ \
             -device-option CROSS_COMPILE=${TARGET}- \
             -device-option PKG_CONFIG='${TARGET}-pkg-config' \
+            -c++11 \
             -force-pkg-config \
             -release \
-            -static \
+            $(if $(BUILD_STATIC), \
+                -static , \
+                -shared ) \
+            -optimized-qmake \
             -prefix '$(PREFIX)/$(TARGET)/qt5' \
             -icu \
             -opengl desktop \
