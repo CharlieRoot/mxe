@@ -1,0 +1,13 @@
+diff --git a/include/shlobj.h b/include/shlobj.h
+index e313c2b..837140f 100644
+--- a/include/shlobj.h
++++ b/include/shlobj.h
+@@ -1493,7 +1493,7 @@ HRESULT WINAPI SHBindToParent(LPCITEMIDLIST,REFIID,VOID**,LPCITEMIDLIST*);
+ #if (_WIN32_WINNT >= 0x0501) /* XP */
+ HRESULT WINAPI SHGetFolderPathAndSubDirA(HWND,int,HANDLE,DWORD,LPCSTR,LPSTR);
+ HRESULT WINAPI SHGetFolderPathAndSubDirW(HWND,int,HANDLE,DWORD,LPCWSTR,LPWSTR);
+-HRESULT WINAPI SHParseDisplayName(LPCWSTR,IBindCtx*,LPITEMIDLIST,SFGAOF,SFGAOF*);
++HRESULT WINAPI SHParseDisplayName(LPCWSTR,IBindCtx*,LPITEMIDLIST*,SFGAOF,SFGAOF*);
+ #endif
+ void WINAPI SHGetSettings(LPSHELLFLAGSTATE,DWORD);
+ #if (_WIN32_WINNT >= 0x0500) /* W2K */
