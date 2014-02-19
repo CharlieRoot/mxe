@@ -1,0 +1,13 @@
+diff --git a/Source/WTF/wtf/Atomics.h b/Source/WTF/wtf/Atomics.h
+index ea4f55f..04c30b6 100644
+--- a/Source/WTF/wtf/Atomics.h
++++ b/Source/WTF/wtf/Atomics.h
+@@ -254,7 +254,7 @@ inline void memoryBarrierBeforeUnlock() { armV7_dmb(); }
+ 
+ inline void x86_mfence()
+ {
+-#if OS(WINDOWS)
++#if OS(WINDOWS) && !COMPILER(GCC)
+     // I think that this does the equivalent of a dummy interlocked instruction,
+     // instead of using the 'mfence' instruction, at least according to MSDN. I
+     // know that it is equivalent for our purposes, but it would be good to

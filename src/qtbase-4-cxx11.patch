@@ -1,0 +1,13 @@
+diff --git a/mkspecs/win32-g++/qmake.conf b/mkspecs/win32-g++/qmake.conf
+index d514b6d..57278f4 100644
+--- a/mkspecs/win32-g++/qmake.conf
++++ b/mkspecs/win32-g++/qmake.conf
+@@ -55,7 +55,7 @@ QMAKE_CXXFLAGS_RTTI_ON  = -frtti
+ QMAKE_CXXFLAGS_RTTI_OFF = -fno-rtti
+ QMAKE_CXXFLAGS_EXCEPTIONS_ON = -fexceptions -mthreads
+ QMAKE_CXXFLAGS_EXCEPTIONS_OFF = -fno-exceptions
+-QMAKE_CXXFLAGS_CXX11    = -std=c++0x
++QMAKE_CXXFLAGS_CXX11    = -std=gnu++0x
+ 
+ QMAKE_INCDIR            =
+ 
