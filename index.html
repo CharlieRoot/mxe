@@ -259,6 +259,12 @@
     just skip the following step and go straight to step 3.
     </p>
 
+    <p>
+    MXE builds and installs everything under the same
+    top-level directory and is not relocatable after
+    the first packages are built.
+    </p>
+
     <h3 id="tutorial-2">Step 2: System-wide Installation (optional)</h3>
 
     <p>
@@ -290,7 +296,7 @@ exit</pre>
     <h3 id="tutorial-3">Step 3: Build MXE</h3>
 
     <p>
-    Enter the directory where you've downloaded the MXE.
+    Enter the directory where you've downloaded MXE.
     Now it depends on what you actually want &ndash; or need.
     </p>
 
@@ -1074,6 +1080,23 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
         download the new versions and note their checksums
         </dd>
 
+    <dt>make update-package-foo</dt>
+
+        <dd>
+        for internal use only!
+        &ndash;
+        update the version numbers of package foo,
+        download the new version and note its checksum
+        </dd>
+
+    <dt>make update-checksum-foo</dt>
+
+        <dd>
+        for internal use only!
+        &ndash;
+        download package foo and update its checksum
+        </dd>
+
     <dt>make cleanup-style</dt>
 
         <dd>
@@ -1161,6 +1184,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
         <td class="website"><a href="http://www.boost.org/">Boost C++ Library</a></td>
     </tr>
     <tr>
+        <td class="package">bullet</td>
+        <td class="website"><a href="http://bulletphysics.org/">Bullet physics, version 2</a></td>
+    </tr>
+    <tr>
         <td class="package">bzip2</td>
         <td class="website"><a href="http://www.bzip.org/">bzip2</a></td>
     </tr>
@@ -1175,6 +1202,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
     <tr>
         <td class="package">cblas</td>
         <td class="website"><a href="http://www.netlib.org/blas/">cblas</a></td>
+    </tr>
+    <tr>
+        <td class="package">chromaprint</td>
+        <td class="website"><a href="http://acoustid.org/chromaprint">Chromaprint</a></td>
     </tr>
     <tr>
         <td class="package">cegui</td>
@@ -1928,6 +1959,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
         <td class="website"><a href="http://www.openexr.com/">OpenEXR</a></td>
     </tr>
     <tr>
+        <td class="package">openmp-validation</td>
+        <td class="website"><a href="http://web.cs.uh.edu/~openuh/">OpenMP Validation Suite</a></td>
+    </tr>
+    <tr>
         <td class="package">openscenegraph</td>
         <td class="website"><a href="http://www.openscenegraph.org/">OpenSceneGraph</a></td>
     </tr>
@@ -2160,6 +2195,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
         <td class="website"><a href="http://tiswww.case.edu/php/chet/readline/rltop.html">Readline</a></td>
     </tr>
     <tr>
+        <td class="package">rubberband</td>
+        <td class="website"><a href="http://breakfastquay.com/rubberband/">Rubberband</a></td>
+    </tr>
+    <tr>
         <td class="package">sdl</td>
         <td class="website"><a href="http://www.libsdl.org/">SDL</a></td>
     </tr>
@@ -2274,6 +2313,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
     <tr>
         <td class="package">twolame</td>
         <td class="website"><a href="http://www.twolame.org/">TwoLAME</a></td>
+    </tr>
+    <tr>
+        <td class="package">vamp-plugin-sdk</td>
+        <td class="website"><a href="http://vamp-plugins.org/">Vamp Plugins SDK</a></td>
     </tr>
     <tr>
         <td class="package">vcdimager</td>
@@ -3873,6 +3916,9 @@ endef</pre>
     </li>
     <li>
         <a href="https://www.maxr.org/">Mechanized Assault and eXploration Reloaded</a>
+    </li>
+    <li>
+        <a href="http://www.nongnu.org/galois/">Galois</a>
     </li>
     </ul>
 </div>
