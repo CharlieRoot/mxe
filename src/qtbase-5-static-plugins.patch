@@ -1,0 +1,18 @@
+diff --git a/mkspecs/features/create_cmake.prf b/mkspecs/features/create_cmake.prf
+index 19b2646..dd5de1a 100644
+--- a/mkspecs/features/create_cmake.prf
++++ b/mkspecs/features/create_cmake.prf
+@@ -127,10 +127,10 @@ contains(CONFIG, plugin) {
+ 
+     win32 {
+         isEmpty(CMAKE_STATIC_TYPE): CMAKE_PlUGIN_EXT = .dll
+-        else: CMAKE_PlUGIN_EXT = .lib
++        else: CMAKE_PlUGIN_EXT = .$${QMAKE_EXTENSION_STATICLIB}
+ 
+-        CMAKE_PLUGIN_LOCATION_RELEASE = $$PLUGIN_TYPE/$${TARGET}$${CMAKE_PlUGIN_EXT}
+-        CMAKE_PLUGIN_LOCATION_DEBUG = $$PLUGIN_TYPE/$${TARGET}d$${CMAKE_PlUGIN_EXT}
++        CMAKE_PLUGIN_LOCATION_RELEASE = $$PLUGIN_TYPE/$${QMAKE_PREFIX_STATICLIB}$${TARGET}$${CMAKE_PlUGIN_EXT}
++        CMAKE_PLUGIN_LOCATION_DEBUG = $$PLUGIN_TYPE/$${QMAKE_PREFIX_STATICLIB}$${TARGET}d$${CMAKE_PlUGIN_EXT}
+     } else {
+         mac {
+             isEmpty(CMAKE_STATIC_TYPE): CMAKE_PlUGIN_EXT = .dylib
