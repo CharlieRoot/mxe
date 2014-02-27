@@ -3,18 +3,38 @@
 
 PKG             := openblas
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION	:= 0.2.7
-$(PKG)_CHECKSUM := 2b957a69e3740332759d3c17cc985ecf77364ce3
+$(PKG)_VERSION  := 0.2.8
+$(PKG)_CHECKSUM := d012ebc2b8dcd3e95f667dff08318a81479a47c3
 $(PKG)_SUBDIR   := OpenBLAS-$($(PKG)_VERSION)
-$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := https://github.com/xianyi/OpenBLAS/archive/v$($(PKG)_VERSION).tar.gz
+$(PKG)_FILE     := $($(PKG)_SUBDIR).tar.gz
+$(PKG)_URL      := http://github.com/xianyi/OpenBLAS/archive/v$($(PKG)_VERSION).tar.gz
 $(PKG)_DEPS     := gcc
 
 define $(PKG)_UPDATE
-    echo 1
+    $(WGET) -q -O- 'https://github.com/xianyi/OpenBLAS/releases' | \
+    $(SED) -n 's,.*OpenBLAS/archive/v\([0-9][^"]*\)\.tar\.gz.*,\1,p' | \
+    grep -v 'rc' | \
+    $(SORT) -V | \
+    tail -1
 endef
 
+$(PKG)_MAKE_OPTS = \
+        PREFIX='$(PREFIX)/$(TARGET)' \
+        CROSS_SUFFIX='$(TARGET)-' \
+        FC='$(TARGET)-gfortran' \
+        CC='$(TARGET)-gcc' \
+        HOSTFC='gfortran' \
+        HOSTCC='gcc' \
+        CROSS=1 \
+        NO_CBLAS=1 \
+        NO_LAPACK=1 \
+        USE_THREAD=0 \
+        TARGET=CORE2 \
+        DYNAMIC_ARCH=1 \
+        BINARY=$(if $(findstring x86_64,$(TARGET)),64,32) \
+        $(if $(BUILD_STATIC),NO_SHARED=1)
+
 define $(PKG)_BUILD
-    $(MAKE) -C '$(1)' -j '$(JOBS)' CC=$(TARGET)-gcc FC=$(TARGET)-gfortran HOSTCC=clang CROSS=1 CROSS_SUFFIX=$(TARGET)- TARGET=PENRYN NO_LAPACK=1 NO_SHARED=1
-    $(MAKE) -C '$(1)' install PREFIX='$(PREFIX)/$(TARGET)' NO_LAPACK=1 NO_SHARED=1
+    $(MAKE) -C '$(1)' -j '$(JOBS)' $($(PKG)_MAKE_OPTS)
+    $(MAKE) -C '$(1)' -j 1 install $($(PKG)_MAKE_OPTS)
 endef

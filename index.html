@@ -870,7 +870,8 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
     </p>
     <!-- http://www.macports.org/ports.php -->
     <pre>sudo port install \
-    coreutils glib2 gsed intltool p5-xml-parser scons wget xz</pre>
+    coreutils glib2 gsed intltool \
+    p5-xml-parser gpatch scons wget xz</pre>
     <p>
     and from within the mxe directory:
     </p>
@@ -1940,7 +1941,7 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
     </tr>
     <tr>
         <td class="package">openblas</td>
-        <td class="website"><a href="https://github.com/xianyi/OpenBLAS">openblas</a></td>
+        <td class="website"><a href="http://www.openblas.net/">OpenBLAS</a></td>
     </tr>
     <tr>
         <td class="package">opencore-amr</td>
@@ -2948,6 +2949,12 @@ endef</pre>
     </p>
 
     <h3 id="potential-legal-issues">Potential Issues - Non Exhaustive List</h3>
+
+    <h4>GNU Licenses</h4>
+    <p>
+    Review the
+    <a href="http://www.gnu.org/licenses/gpl-faq.html#content">FAQ</a>
+    </p>
 
     <h4>LGPL and Static Linking</h4>
 
