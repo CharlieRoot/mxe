@@ -18,13 +18,10 @@ endef
 define $(PKG)_BUILD
     mkdir -p '$(1).build'
     cd       '$(1).build' && '$(1)/libgomp/configure' \
-        --host='$(TARGET)' \
-        --build="`config.guess`" \
-        --target='$(TARGET)' \
+        $(MXE_CONFIGURE_OPTS) \
         --prefix='$(PREFIX)' \
         --enable-version-specific-runtime-libs \
         --with-gnu-ld \
-        --disable-shared \
         LIBS='-lws2_32' \
         ac_cv_prog_FC='$(TARGET)-gfortran'
     $(MAKE) -C '$(1).build' -j '$(JOBS)' install
