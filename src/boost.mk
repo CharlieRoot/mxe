@@ -31,7 +31,7 @@ define $(PKG)_BUILD
         target-os=windows \
         threading=multi \
         $(if $(BUILD_STATIC), \
-            link=static , \
+            link=static define=U_STATIC_IMPLEMENTATION=1 , \
             link=shared ) \
         threadapi=win32 \
         --layout=tagged \
@@ -47,7 +47,10 @@ define $(PKG)_BUILD
         -sEXPAT_LIBPATH='$(PREFIX)/$(TARGET)/lib' \
         -sHAVE_ICU=1 \
         -sICU_PATH='$(PREFIX)/$(TARGET)' \
-        -sICU_LINK="-L$(PREFIX)/$(TARGET)/lib -licuin -licuuc -licudt" \
+        -sICU_LINK="-L$(PREFIX)/$(TARGET)/lib \
+        $(if $(BUILD_STATIC), \
+            -lsicuin -lsicuuc -lsicudt , \
+            -licuin -licuuc -licudt ) " \
         stage install
 
     '$(TARGET)-g++' \
