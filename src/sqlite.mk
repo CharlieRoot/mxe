@@ -3,8 +3,8 @@
 
 PKG             := sqlite
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3080301
-$(PKG)_CHECKSUM := a9b0a3d66fb5c2ae51ad2d8a512ca827adc7d59c
+$(PKG)_VERSION  := 3080401
+$(PKG)_CHECKSUM := f8a77b74bd2632eb14cea62cd8b92c45026e248c
 $(PKG)_SUBDIR   := $(PKG)-autoconf-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-autoconf-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := http://www.sqlite.org/2014/$($(PKG)_FILE)
@@ -20,6 +20,7 @@ define $(PKG)_BUILD
     cd '$(1)' && ./configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-readline \
-        --enable-threadsafe
+        --enable-threadsafe \
+        CFLAGS="-Os"
     $(MAKE) -C '$(1)' -j '$(JOBS)' install
 endef
