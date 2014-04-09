@@ -3,8 +3,8 @@
 
 PKG             := vmime
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4cf7e02
-$(PKG)_CHECKSUM := 62054750162b4691498c97353c113e9d1de40cec
+$(PKG)_VERSION  := 4965674
+$(PKG)_CHECKSUM := 9763765fb1b58e7459552a1dc36d0ff6ba7107a2
 $(PKG)_SUBDIR   := kisli-vmime-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := https://github.com/kisli/vmime/tarball/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -17,6 +17,9 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
+    # The following hint is probably needed for ICU:
+    # -DICU_LIBRARIES="`'$(TARGET)-pkg-config' --libs-only-l icu-i18n`"
+
     cd '$(1)' && cmake \
         -DCMAKE_TOOLCHAIN_FILE='$(CMAKE_TOOLCHAIN_FILE)' \
         -DCMAKE_AR='$(PREFIX)/bin/$(TARGET)-ar' \
@@ -29,10 +32,11 @@ define $(PKG)_BUILD
         -DVMIME_BUILD_SAMPLES=OFF \
         -DVMIME_BUILD_DOCUMENTATION=OFF \
         -DCMAKE_MODULE_PATH='$(1)/cmake' \
-        -DICU_LIBRARIES="`'$(TARGET)-pkg-config' --libs-only-l icu-i18n`" \
         -DVMIME_CHARSETCONV_LIB_IS_ICONV=OFF \
         -DVMIME_CHARSETCONV_LIB_IS_ICU=OFF \
         -DVMIME_CHARSETCONV_LIB_IS_WIN=ON \
+        -DVMIME_TLS_SUPPORT_LIB_IS_GNUTLS=ON \
+        -DVMIME_TLS_SUPPORT_LIB_IS_OPENSSL=OFF \
         -DVMIME_SHARED_PTR_USE_CXX=ON \
         -DCXX11_COMPILER_FLAGS=ON \
         -C../../src/vmime-TryRunResults.cmake \
@@ -48,3 +52,5 @@ define $(PKG)_BUILD
         `'$(TARGET)-pkg-config' vmime --cflags --libs`
     $(INSTALL) -m755 '$(1)/examples/test-vmime.exe' '$(PREFIX)/$(TARGET)/bin/'
 endef
+
+$(PKG)_BUILD_SHARED =
