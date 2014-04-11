@@ -11,8 +11,8 @@ include $(EXT_DIR)/gmsl
 
 MXE_TRIPLETS       := i686-pc-mingw32 x86_64-w64-mingw32 i686-w64-mingw32
 MXE_LIB_TYPES      := static shared
-MXE_TARGET_LIST    := $(foreach LIB_TYPE,$(MXE_LIB_TYPES),\
-                          $(addsuffix .$(LIB_TYPE),$(MXE_TRIPLETS)))
+MXE_TARGET_LIST    := $(foreach TRIPLET,$(MXE_TRIPLETS),\
+                          $(addprefix $(TRIPLET).,$(MXE_LIB_TYPES)))
 MXE_TARGETS        := i686-pc-mingw32.static
 
 DEFAULT_MAX_JOBS   := 6
@@ -122,9 +122,22 @@ else ifeq ($(wildcard $(PWD)/settings.mk),$(PWD)/settings.mk)
 else
     $(info [create settings.mk])
     $(shell { \
+        echo '# This is a template of configuration file for MXE. See'; \
+        echo '# index.html for more extensive documentations.'; \
+        echo; \
+        echo '# This variable controls the number of compilation processes'; \
+        echo '# within one package ("intra-package parallelism").'; \
         echo '#JOBS := $(JOBS)'; \
+        echo; \
+        echo '# This variable controls the targets that will build.'; \
         echo '#MXE_TARGETS := $(MXE_TARGET_LIST)'; \
+        echo; \
+        echo '# This variable controls the download mirror for SourceForge,'; \
+        echo '# when it is used. Enabling the value below means auto.'; \
         echo '#SOURCEFORGE_MIRROR := downloads.sourceforge.net'; \
+        echo; \
+        echo '# The three lines below makes `make` build these "local'; \
+        echo '# packages" instead of all packages.'; \
         echo '#LOCAL_PKG_LIST := boost curl file flac lzo pthreads vorbis wxwidgets'; \
         echo '#.DEFAULT local-pkg-list:'; \
         echo '#local-pkg-list: $$(LOCAL_PKG_LIST)'; \
