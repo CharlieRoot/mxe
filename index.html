@@ -544,7 +544,12 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
     <p>
     MXE requires a recent Unix system where
     all components as stated in the table below
-    are installed.
+    are installed. It also needs roughly 4 GB of
+    RAM to link gcc and at least 700 MB of disk
+    space per target (counted with only gcc
+    built).
+    </p>
+    <p>
     Detailed instructions are available for:
     </p>
 
@@ -604,6 +609,10 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
         <td></td>
     </tr>
     <tr>
+        <td><a href="https://www.gnu.org/software/gperf/">GNU gperf</a></td>
+        <td></td>
+    </tr>
+    <tr>
         <td><a href="https://www.gnu.org/software/make/">GNU Make</a></td>
         <td>≥ 3.81</td>
     </tr>
@@ -648,6 +657,14 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
         <td>≥ 0.16</td>
     </tr>
     <tr>
+        <td><a href="https://www.python.org/">Python</a></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><a href="https://www.ruby-lang.org/">Ruby</a></td>
+        <td></td>
+    </tr>
+    <tr>
         <td><a href="http://www.scons.org/">SCons</a></td>
         <td>≥ 0.98</td>
     </tr>
@@ -670,9 +687,9 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
     <!-- http://www.debian.org/distrib/packages#search_packages -->
     <pre>apt-get install \
     autoconf automake bash bison bzip2 cmake flex gettext \
-    git g++ intltool libffi-dev libtool libltdl-dev \
+    git g++ gperf intltool libffi-dev libtool libltdl-dev \
     libssl-dev libxml-parser-perl make openssl patch perl \
-    pkg-config scons sed unzip wget xz-utils</pre>
+    pkg-config python ruby scons sed unzip wget xz-utils</pre>
 
     <p>
     On 64-bit Debian, install also:
@@ -688,8 +705,9 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
     <!-- https://admin.fedoraproject.org/pkgdb/ -->
     <pre>yum install \
     autoconf automake bash bison bzip2 cmake flex gcc-c++ \
-    gettext git intltool make sed libffi-devel libtool \
-    openssl-devel patch perl pkgconfig scons unzip wget xz</pre>
+    gettext git gperf intltool make sed libffi-devel \
+    libtool openssl-devel patch perl pkgconfig python \
+    ruby scons unzip wget xz</pre>
 
     <p>
     On 64-bit Fedora,
@@ -701,9 +719,9 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
     <!-- http://www.freshports.org/ -->
     <pre>pkg_add -r \
     automake autoconf bash bison cmake coreutils flex \
-    gettext git glib20 gmake gsed intltool libffi \
+    gettext git glib20 gmake gperf gsed intltool libffi \
     libtool openssl patch perl p5-XML-Parser pkgconf \
-    scons unzip wget</pre>
+    python ruby scons unzip wget</pre>
 
     <p>
     Ensure that /usr/local/bin precedes /usr/bin in your $PATH:
@@ -739,9 +757,9 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
     <!-- http://www.frugalware.org/packages -->
     <pre>pacman-g2 -S \
     autoconf automake bash bzip2 bison cmake flex gcc \
-    gettext git intltool make sed libffi libtool openssl \
-    patch perl perl-xml-parser pkgconfig scons unzip wget \
-    xz xz-lzma</pre>
+    gettext git gperf intltool make sed libffi libtool \
+    openssl patch perl perl-xml-parser pkgconfig python \
+    ruby scons unzip wget xz xz-lzma</pre>
 
     <p>
     On 64-bit Frugalware,
@@ -755,12 +773,12 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
     sys-devel/autoconf sys-devel/automake app-shells/bash \
     sys-devel/bison app-arch/bzip2 dev-util/cmake \
     sys-devel/flex sys-devel/gcc sys-devel/gettext \
-    dev-vcs/git dev-util/intltool sys-devel/make \
-    sys-apps/sed dev-libs/libffi sys-devel/libtool \
-    dev-libs/openssl sys-devel/patch dev-lang/perl \
-    dev-perl/XML-Parser dev-util/pkgconfig \
-    dev-util/scons app-arch/unzip net-misc/wget \
-    app-arch/xz-utils</pre>
+    dev-vcs/git dev-util/gperf dev-util/intltool \
+    sys-devel/make sys-apps/sed dev-libs/libffi \
+    sys-devel/libtool dev-libs/openssl sys-devel/patch \
+    dev-lang/perl dev-perl/XML-Parser dev-util/pkgconfig \
+    dev-lang/python dev-lang/ruby dev-util/scons \
+    app-arch/unzip net-misc/wget app-arch/xz-utils</pre>
 
     <h3 id="requirements-macos">Mac OS X</h3>
 
@@ -788,12 +806,12 @@ USE_OSGPLUGIN(&lt;plugin2&gt;)
 
     <h3 id="requirements-opensuse">openSUSE</h3>
 
-    <!-- http://software.opensuse.org/113/en -->
+    <!-- http://software.opensuse.org/131/en -->
     <pre>zypper install -R \
     autoconf automake bash bison bzip2 cmake flex gcc-c++ \
-    gettext-tools git intltool libffi-devel libtool make \
-    openssl libopenssl-devel patch perl perl-XML-Parser \
-    pkg-config scons sed unzip wget xz</pre>
+    gettext-tools git gperf intltool libffi-devel libtool \
+    make openssl libopenssl-devel patch perl perl-XML-Parser \
+    pkg-config python ruby scons sed unzip wget xz</pre>
 
     <p>
     On 64-bit openSUSE, install also:
@@ -944,6 +962,13 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
         <dd>
         remove all package builds
         &ndash; use with caution!
+        </dd>
+
+    <dt>make clean-junk</dt>
+
+        <dd>
+        remove all unused files, including unused package
+        files, temporary folders, and logs
         </dd>
 
     <dt>make clean-pkg</dt>
@@ -1330,6 +1355,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
         <td class="website"><a href="https://www.gnu.org/software/gnutls/">GnuTLS</a></td>
     </tr>
     <tr>
+        <td class="package">gperf</td>
+        <td class="website"><a href="https://www.gnu.org/software/gperf/">GNU gperf</a></td>
+    </tr>
+    <tr>
         <td class="package">graphicsmagick</td>
         <td class="website"><a href="http://www.graphicsmagick.org/">GraphicsMagick</a></td>
     </tr>
@@ -1463,7 +1492,7 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
     </tr>
     <tr>
         <td class="package">lensfun</td>
-        <td class="website"><a href="http://lensfun.berlios.de/">lensfun</a></td>
+        <td class="website"><a href="http://lensfun.sourceforge.net/">lensfun</a></td>
     </tr>
     <tr>
         <td class="package">levmar</td>

@@ -3,8 +3,8 @@
 
 PKG             := mpg123
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.17.0
-$(PKG)_CHECKSUM := 8185f06ab94651adb2fc7a1ab860f0fd154b6f80
+$(PKG)_VERSION  := 1.19.0
+$(PKG)_CHECKSUM := 835f8ae489b41ae69fa8c76a0b1e5ee5495ef0ae
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.bz2
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/mpg123/$(PKG)/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -18,14 +18,10 @@ endef
 
 define $(PKG)_BUILD
     cd '$(1)' && ./configure \
-        --host='$(TARGET)' \
-        --disable-shared \
-        --prefix='$(PREFIX)/$(TARGET)' \
+        $(MXE_CONFIGURE_OPTS) \
         --with-default-audio=win32 \
         --with-audio=win32,sdl,dummy \
         --enable-modules=no
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     $(MAKE) -C '$(1)' -j 1 install
 endef
-
-$(PKG)_BUILD_SHARED =

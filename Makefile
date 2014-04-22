@@ -37,9 +37,9 @@ WGET       := wget --no-check-certificate \
                    $(SED) -n 's,GNU \(Wget\) \([0-9.]*\).*,\1/\2,p')
 
 REQUIREMENTS := autoconf automake autopoint bash bison bzip2 cmake flex \
-                gcc g++ intltoolize $(LIBTOOL) $(LIBTOOLIZE) \
+                gcc g++ gperf intltoolize $(LIBTOOL) $(LIBTOOLIZE) \
                 $(MAKE) openssl $(PATCH) $(PERL) pkg-config \
-                scons $(SED) $(SORT) unzip wget xz
+                python ruby scons $(SED) $(SORT) unzip wget xz
 
 PREFIX     := $(PWD)/usr
 LOG_DIR    := $(PWD)/log
@@ -225,7 +225,7 @@ $(1): | $(if $(value $(1)_DEPS), \
 					$(addprefix $(PREFIX)/$($(1)_DEPS)/installed/,$(PKGS))))) \
 		$($(1)_DEPS)
 	@echo '[target]   $(1) $(call TARGET_HEADER)'
-	$(if $(findstring 1,$(words $(subst ., ,$(1)))),
+	$(if $(findstring 1,$(words $(subst ., ,$(filter-out $(BUILD),$(1))))),
 	    @echo
 	    @echo '------------------------------------------------------------'
 	    @echo 'Warning: Deprecated target name $(1) specified'
@@ -433,6 +433,10 @@ clean-pkg:
                   $(filter-out \
                       $(foreach PKG,$(PKGS),$(PKG_DIR)/$($(PKG)_FILE)), \
                       $(wildcard $(PKG_DIR)/*)))
+
+.PHONY: clean-junk
+clean-junk: clean-pkg
+	rm -rf $(LOG_DIR) $(call TMP_DIR,*)
 
 .PHONY: update
 define UPDATE
