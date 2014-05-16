@@ -46,10 +46,19 @@ LOG_DIR    := $(PWD)/log
 TIMESTAMP  := $(shell date +%Y%m%d_%H%M%S)
 PKG_DIR    := $(PWD)/pkg
 TMP_DIR     = $(PWD)/tmp-$(1)
-PKGS       := $(shell $(SED) -n 's/^.* class="package">\([^<]*\)<.*$$/\1/p' '$(TOP_DIR)/index.html')
+PKGS       := $(call set_create,\
+    $(shell $(SED) -n 's/^.* class="package">\([^<]*\)<.*$$/\1/p' '$(TOP_DIR)/index.html'))
 BUILD      := $(shell '$(EXT_DIR)/config.guess')
-BUILD_PKGS := $(shell grep -l 'BUILD_$$(BUILD)' '$(TOP_DIR)/src/'*.mk | $(SED) -n 's,.*src/\(.*\)\.mk,\1,p')
 PATH       := $(PREFIX)/$(BUILD)/bin:$(PREFIX)/bin:$(PATH)
+
+# define some whitespace variables
+define newline
+
+
+endef
+
+null  :=
+space := $(null) $(null)
 
 MXE_CONFIGURE_OPTS = \
     --host='$(TARGET)' \
@@ -144,99 +153,6 @@ else
     } >'$(PWD)/settings.mk')
 endif
 
-.PHONY: all
-all: all-filtered
-
-.PHONY: check-requirements
-define CHECK_REQUIREMENT
-    @if ! $(1) --help &>/dev/null; then \
-        echo; \
-        echo 'Missing requirement: $(1)'; \
-        echo; \
-        echo 'Please have a look at "index.html" to ensure'; \
-        echo 'that your system meets all requirements.'; \
-        echo; \
-        exit 1; \
-    fi
-
-endef
-define CHECK_REQUIREMENT_VERSION
-    @if ! $(1) --version | head -1 | grep ' \($(2)\)$$' >/dev/null; then \
-        echo; \
-        echo 'Wrong version of requirement: $(1)'; \
-        echo; \
-        echo 'Please have a look at "index.html" to ensure'; \
-        echo 'that your system meets all requirements.'; \
-        echo; \
-        exit 1; \
-    fi
-
-endef
-$(shell [ -d '$(PREFIX)/installed' ] || mkdir -p '$(PREFIX)/installed')
-
-check-requirements: $(PREFIX)/installed/check-requirements
-$(PREFIX)/installed/check-requirements: $(MAKEFILE)
-	@echo '[check requirements]'
-	$(foreach REQUIREMENT,$(REQUIREMENTS),$(call CHECK_REQUIREMENT,$(REQUIREMENT)))
-	$(call CHECK_REQUIREMENT_VERSION,autoconf,2\.6[4-9]\|2\.[7-9][0-9])
-	$(call CHECK_REQUIREMENT_VERSION,automake,1\.11\.[3-9]\|1\.[1-9][2-9]\(\.[0-9]\+\)\?)
-	@touch '$@'
-
-# define some whitespace variables
-define newline
-
-
-endef
-
-null  :=
-space := $(null) $(null)
-
-include $(patsubst %,$(TOP_DIR)/src/%.mk,$(PKGS))
-
-.PHONY: download
-download: $(addprefix download-,$(PKGS))
-
-.PHONY: build-requirements
-build-requirements:
-	@$(MAKE) -f '$(MAKEFILE)' $(BUILD_PKGS) MXE_TARGETS=$(BUILD) DONT_CHECK_REQUIREMENTS=true
-
-define TARGET_DEPS
-$(1)_DEPS := $(shell echo '$(MXE_TARGETS)' | \
-                     $(SED) -n 's,.*$(1)\(.*\),\1,p' | \
-                     awk '{print $$1}')
-endef
-$(foreach TARGET,$(MXE_TARGETS),$(eval $(call TARGET_DEPS,$(TARGET))))
-
-TARGET_HEADER = \
-    $(strip with \
-	$(if $(value MAKECMDGOALS),\
-		$(words $(MAKECMDGOALS)) goal$(shell [ $(words $(MAKECMDGOALS)) == 1 ] || echo s) from command line,\
-	$(if $(value LOCAL_PKG_LIST),\
-		$(words $(LOCAL_PKG_LIST)) goal$(shell [ $(words $(LOCAL_PKG_LIST)) == 1 ] || echo s) from settings.mk,\
-		$(words $(PKGS)) goal$(shell [ $(words $(PKGS)) == 1 ] || echo s) from src/*.mk)))
-
-define TARGET_RULE
-.PHONY: $(1)
-$(1): | $(if $(value $(1)_DEPS), \
-			$(if $(value MAKECMDGOALS),\
-				$(addprefix $(PREFIX)/$($(1)_DEPS)/installed/,$(MAKECMDGOALS)), \
-				$(if $(value LOCAL_PKG_LIST),\
-					$(addprefix $(PREFIX)/$($(1)_DEPS)/installed/,$(LOCAL_PKG_LIST)), \
-					$(addprefix $(PREFIX)/$($(1)_DEPS)/installed/,$(PKGS))))) \
-		$($(1)_DEPS)
-	@echo '[target]   $(1) $(call TARGET_HEADER)'
-	$(if $(findstring 1,$(words $(subst ., ,$(filter-out $(BUILD),$(1))))),
-	    @echo
-	    @echo '------------------------------------------------------------'
-	    @echo 'Warning: Deprecated target name $(1) specified'
-	    @echo
-	    @echo 'Please use $(1).[$(subst $(space),|,$(MXE_LIB_TYPES))] instead'
-	    @echo 'See index.html for further information'
-	    @echo '------------------------------------------------------------'
-	    @echo)
-endef
-$(foreach TARGET,$(MXE_TARGETS),$(eval $(call TARGET_RULE,$(TARGET))))
-
 # cache some target string manipulation functions
 # `memoize` and `uc` from gmsl
 _CHOP_TARGET = $(call merge,.,$(call chop,$(call split,.,$(1))))
@@ -261,6 +177,94 @@ LOOKUP_PKG_RULE = $(strip \
                 $(1)_$(2))),\
         $(call set,LOOKUP_PKG_RULE_,$(1)_$(2)_$(or $(5),$(3)),$(1)_$(2)_$(3))\
         $(1)_$(2)_$(3))))
+
+.PHONY: all
+all: all-filtered
+
+.PHONY: check-requirements
+define CHECK_REQUIREMENT
+    @if ! $(1) --help &>/dev/null; then \
+        echo 'Missing requirement: $(1)'; \
+        touch check-requirements-failed; \
+    fi
+
+endef
+define CHECK_REQUIREMENT_VERSION
+    @if ! $(1) --version | head -1 | grep ' \($(2)\)$$' >/dev/null; then \
+        echo 'Wrong version of requirement: $(1)'; \
+        touch check-requirements-failed; \
+    fi
+
+endef
+$(shell [ -d '$(PREFIX)/installed' ] || mkdir -p '$(PREFIX)/installed')
+
+check-requirements: $(PREFIX)/installed/check-requirements
+$(PREFIX)/installed/check-requirements: $(MAKEFILE)
+	@echo '[check requirements]'
+	$(foreach REQUIREMENT,$(REQUIREMENTS),$(call CHECK_REQUIREMENT,$(REQUIREMENT)))
+	$(call CHECK_REQUIREMENT_VERSION,autoconf,2\.6[4-9]\|2\.[7-9][0-9])
+	$(call CHECK_REQUIREMENT_VERSION,automake,1\.11\.[3-9]\|1\.[1-9][2-9]\(\.[0-9]\+\)\?)
+	@if [ -e check-requirements-failed ]; then \
+	    echo; \
+        echo 'Please have a look at "index.html" to ensure'; \
+        echo 'that your system meets all requirements.'; \
+        echo; \
+	    rm check-requirements-failed; \
+	    exit 1; \
+	fi
+	@touch '$@'
+
+include $(patsubst %,$(TOP_DIR)/src/%.mk,$(PKGS))
+
+BUILD_PKGS := $(call set_create, \
+    $(foreach PKG, \
+        $(shell grep -l 'BUILD_$$(BUILD)' '$(TOP_DIR)/src/'*.mk | \
+            $(SED) -n 's,.*src/\(.*\)\.mk,\1,p'), \
+        $(if $(value $(call LOOKUP_PKG_RULE,$(PKG),BUILD,$(BUILD))), $(PKG))))
+
+.PHONY: download
+download: $(addprefix download-,$(PKGS))
+
+.PHONY: build-requirements
+build-requirements:
+	@$(MAKE) -f '$(MAKEFILE)' $(BUILD_PKGS) MXE_TARGETS=$(BUILD) DONT_CHECK_REQUIREMENTS=true
+
+define TARGET_DEPS
+$(1)_DEPS := $(shell echo '$(MXE_TARGETS)' | \
+                     $(SED) -n 's,.*$(1)\(.*\),\1,p' | \
+                     awk '{print $$1}')
+endef
+$(foreach TARGET,$(MXE_TARGETS),$(eval $(call TARGET_DEPS,$(TARGET))))
+
+TARGET_HEADER = \
+    $(strip with \
+	$(if $(value MAKECMDGOALS),\
+	    $(words $(MAKECMDGOALS)) goal$(shell [ $(words $(MAKECMDGOALS)) == 1 ] || echo s) from command line,\
+	$(if $(value LOCAL_PKG_LIST),\
+	    $(words $(LOCAL_PKG_LIST)) goal$(shell [ $(words $(LOCAL_PKG_LIST)) == 1 ] || echo s) from settings.mk,\
+	    $(words $(PKGS)) goal$(shell [ $(words $(PKGS)) == 1 ] || echo s) from src/*.mk)))
+
+define TARGET_RULE
+.PHONY: $(1)
+$(1): | $(if $(value $(1)_DEPS), \
+	        $(if $(value MAKECMDGOALS),\
+	            $(addprefix $(PREFIX)/$($(1)_DEPS)/installed/,$(MAKECMDGOALS)), \
+	            $(if $(value LOCAL_PKG_LIST),\
+	                $(addprefix $(PREFIX)/$($(1)_DEPS)/installed/,$(LOCAL_PKG_LIST)), \
+	                $(addprefix $(PREFIX)/$($(1)_DEPS)/installed/,$(PKGS))))) \
+	    $($(1)_DEPS)
+	@echo '[target]   $(1) $(call TARGET_HEADER)'
+	$(if $(findstring 1,$(words $(subst ., ,$(filter-out $(BUILD),$(1))))),
+	    @echo
+	    @echo '------------------------------------------------------------'
+	    @echo 'Warning: Deprecated target name $(1) specified'
+	    @echo
+	    @echo 'Please use $(1).[$(subst $(space),|,$(MXE_LIB_TYPES))] instead'
+	    @echo 'See index.html for further information'
+	    @echo '------------------------------------------------------------'
+	    @echo)
+endef
+$(foreach TARGET,$(MXE_TARGETS),$(eval $(call TARGET_RULE,$(TARGET))))
 
 define PKG_RULE
 .PHONY: download-$(1)
@@ -375,11 +379,12 @@ SET_CLEAR = \
 WALK_UPSTREAM = \
     $(strip \
         $(foreach PKG,$(filter $(1),$(PKGS)),\
-            $(foreach DEP,$($(PKG)_DEPS) $(foreach TARGET,$(MXE_TARGETS),$($(PKG)_DEPS_$(TARGET))),\
-                $(if $(filter-out $(PKGS_VISITED),$(DEP)),\
-                    $(call SET_APPEND,PKGS_VISITED,$(DEP))\
-                    $(call WALK_UPSTREAM,$(DEP))\
-                    $(DEP)))))
+            $(foreach DEP,$($(PKG)_DEPS) $(foreach TARGET,$(MXE_TARGETS),\
+                $(value $(call LOOKUP_PKG_RULE,$(PKG),DEPS,$(TARGET)))),\
+                    $(if $(filter-out $(PKGS_VISITED),$(DEP)),\
+                        $(call SET_APPEND,PKGS_VISITED,$(DEP))\
+                        $(call WALK_UPSTREAM,$(DEP))\
+                        $(DEP)))))
 
 # not really walking downstream - that seems to be quadratic, so take
 # a linear approach and filter the fully expanded upstream for each pkg
@@ -403,29 +408,35 @@ all-filtered: $(filter-out $(call RECURSIVELY_EXCLUDED_PKGS),$(PKGS))
 
 # print a list of upstream dependencies and downstream dependents
 show-deps-%:
-	$(call SET_CLEAR,PKGS_VISITED)
-	$(info $* upstream dependencies:$(newline)\
-	    $(call WALK_UPSTREAM,$*)\
-	    $(newline)$(newline)$* downstream dependents:$(newline)\
-	    $(call WALK_DOWNSTREAM,$*))
-	@echo
+	$(if $(call set_is_member,$*,$(PKGS)),\
+	    $(call SET_CLEAR,PKGS_VISITED)\
+	    $(info $* upstream dependencies:$(newline)\
+	        $(call WALK_UPSTREAM,$*)\
+	        $(newline)$(newline)$* downstream dependents:$(newline)\
+	        $(call WALK_DOWNSTREAM,$*))\
+	    @echo,\
+	    $(error Package $* not found in index.html))
 
 # show upstream dependencies and downstream dependents separately
 # suitable for usage in shell with: `make show-downstream-deps-foo`
 # @echo -n suppresses the "Nothing to be done" without an eol
 show-downstream-deps-%:
-	$(call SET_CLEAR,PKGS_VISITED)
-	$(info $(call WALK_DOWNSTREAM,$*))
-	@echo -n
+	$(if $(call set_is_member,$*,$(PKGS)),\
+	    $(call SET_CLEAR,PKGS_VISITED)\
+	    $(info $(call WALK_DOWNSTREAM,$*))\
+	    @echo -n,\
+	    $(error Package $* not found in index.html))
 
 show-upstream-deps-%:
-	$(call SET_CLEAR,PKGS_VISITED)
-	$(info $(call WALK_UPSTREAM,$*))
-	@echo -n
+	$(if $(call set_is_member,$*,$(PKGS)),\
+	    $(call SET_CLEAR,PKGS_VISITED)\
+	    $(info $(call WALK_UPSTREAM,$*))\
+	    @echo -n,\
+	    $(error Package $* not found in index.html))
 
 .PHONY: clean
 clean:
-	rm -rf $(call TMP_DIR,*) $(PREFIX)/*
+	rm -rf $(call TMP_DIR,*) $(PREFIX)/* build-matrix.html
 
 .PHONY: clean-pkg
 clean-pkg:
@@ -460,29 +471,109 @@ update:
 	$(foreach PKG,$(PKGS),$(call UPDATE,$(PKG),$(shell $($(PKG)_UPDATE))))
 
 update-package-%:
-	$(if $(findstring $*~,$(addsuffix ~,$(PKGS))), \
-	     $(call UPDATE,$*,$(shell $($*_UPDATE))), \
-	     $(error package $* not found in index.html))
+	$(if $(call set_is_member,$*,$(PKGS)), \
+	    $(call UPDATE,$*,$(shell $($*_UPDATE))), \
+	    $(error Package $* not found in index.html))
 
 update-checksum-%:
-	$(if $(findstring $*~,$(addsuffix ~,$(PKGS))), \
-		$(call DOWNLOAD_PKG_ARCHIVE,$*) && \
-		$(SED) -i 's/^\([^ ]*_CHECKSUM *:=\).*/\1 '"`$(call PKG_CHECKSUM,$*)`"'/' '$(TOP_DIR)/src/$*.mk', \
-	$(error package $* not found in index.html))
+	$(if $(call set_is_member,$*,$(PKGS)), \
+	    $(call DOWNLOAD_PKG_ARCHIVE,$*) && \
+	    $(SED) -i 's/^\([^ ]*_CHECKSUM *:=\).*/\1 '"`$(call PKG_CHECKSUM,$*)`"'/' '$(TOP_DIR)/src/$*.mk', \
+	    $(error Package $* not found in index.html))
 
 cleanup-style:
 	@$(foreach FILE,$(wildcard $(addprefix $(TOP_DIR)/,Makefile index.html CNAME src/*.mk src/*test.* tools/*)),\
-            $(SED) ' \
-                s/\r//g; \
-                s/[ \t]\+$$//; \
-                s,^#!/bin/bash$$,#!/usr/bin/env bash,; \
-                $(if $(filter %Makefile,$(FILE)),,\
-                    s/\t/    /g; \
-                ) \
-            ' < $(FILE) > $(TOP_DIR)/tmp-cleanup-style; \
-            diff -u $(FILE) $(TOP_DIR)/tmp-cleanup-style >/dev/null \
-                || { echo '[cleanup] $(FILE)'; \
-                     cp $(TOP_DIR)/tmp-cleanup-style $(FILE); }; \
-            rm -f $(TOP_DIR)/tmp-cleanup-style; \
-        )
+        $(SED) ' \
+            s/\r//g; \
+            s/[ \t]\+$$//; \
+            s,^#!/bin/bash$$,#!/usr/bin/env bash,; \
+            $(if $(filter %Makefile,$(FILE)),,\
+                s/\t/    /g; \
+            ) \
+        ' < $(FILE) > $(TOP_DIR)/tmp-cleanup-style; \
+        diff -u $(FILE) $(TOP_DIR)/tmp-cleanup-style >/dev/null \
+            || { echo '[cleanup] $(FILE)'; \
+                 cp $(TOP_DIR)/tmp-cleanup-style $(FILE); }; \
+        rm -f $(TOP_DIR)/tmp-cleanup-style; \
+    )
+
+build-matrix.html: $(foreach PKG,$(PKGS), $(TOP_DIR)/src/$(PKG).mk)
+	$(foreach TARGET,$(MXE_TARGET_LIST),$(eval $(TARGET)_PKGCOUNT := 0))
+	$(eval BUILD_PKGCOUNT := 0)
+	$(eval BUILD_ONLY_PKGCOUNT := 0)
+	$(eval VIRTUAL_PKGCOUNT := 0)
+	@echo '<!DOCTYPE html>'                  > $@
+	@echo '<html>'                          >> $@
+	@echo '<head>'                          >> $@
+	@echo '<meta http-equiv="content-type" content="text/html; charset=utf-8">' >> $@
+	@echo '<title>MXE Build Matrix</title>' >> $@
+	@echo '<link rel="stylesheet" href="assets/common.css">'       >> $@
+	@echo '<link rel="stylesheet" href="assets/build-matrix.css">' >> $@
+	@echo '</head>'                         >> $@
+	@echo '<body>'                          >> $@
+	@echo '<h2>MXE Build Matrix</h2>'       >> $@
+	@echo '<p>'                             >> $@
+	@echo 'This is a table of all supported package/target'        >> $@
+	@echo 'matrix. Being supported means that this specific'       >> $@
+	@echo 'combination is working to the best of our knowledge,'   >> $@
+	@echo 'but does not mean that it is tested daily.'             >> $@
+	@echo '</p>'                            >> $@
+	@echo '<p>'                             >> $@
+	@echo 'If you found that some package is not working properly,'>> $@
+	@echo 'please file a ticket on GitHub. If you figured out a'   >> $@
+	@echo 'way to make the package work for unsupported targets,'  >> $@
+	@echo 'feel free to submit a pull request.'                    >> $@
+	@echo '</p>'                            >> $@
+	@echo '<table class="fullscreen">'      >> $@
+	@echo '<thead>'                         >> $@
+	@echo '<tr>'                            >> $@
+	@echo '<th rowspan="2">Package</th>'    >> $@
+	@$(foreach TRIPLET,$(MXE_TRIPLETS),          \
+	    echo '<th colspan="$(words $(MXE_LIB_TYPES))">$(TRIPLET)</th>' >> $@;)
+	@echo '<th rowspan="2">Native</th>'     >> $@
+	@echo '</tr>'                           >> $@
+	@echo '<tr>'                            >> $@
+	@$(foreach TRIPLET,$(MXE_TRIPLETS),          \
+	    $(foreach LIB, $(MXE_LIB_TYPES),         \
+	        echo '<th>$(LIB)</th>'          >> $@;))
+	@echo '</tr>'                           >> $@
+	@echo '</thead>'                        >> $@
+	@echo '<tbody>'                         >> $@
+	@$(foreach PKG,$(PKGS),                      \
+	    $(eval $(PKG)_VIRTUAL := $(true))        \
+	    $(eval $(PKG)_BUILD_ONLY := $(true))     \
+	    echo '<tr>'                         >> $@; \
+	    echo '<th class="row">$(PKG)</th>'  >> $@; \
+	    $(foreach TARGET,$(MXE_TARGET_LIST),     \
+	        $(if $(value $(call LOOKUP_PKG_RULE,$(PKG),BUILD,$(TARGET))), \
+	            $(eval $(TARGET)_PKGCOUNT := $(call inc,$($(TARGET)_PKGCOUNT))) \
+	            $(eval $(PKG)_VIRTUAL := $(false)) \
+	            $(eval $(PKG)_BUILD_ONLY := $(false)) \
+	            echo '<td class="supported">Y</td>'   >> $@;,   \
+	            echo '<td class="unsupported">N</td>' >> $@;))  \
+	    $(if $(call set_is_member,$(PKG),$(BUILD_PKGS)),        \
+	        $(eval BUILD_PKGCOUNT := $(call inc,$(BUILD_PKGCOUNT))) \
+	        $(eval $(PKG)_VIRTUAL := $(false))   \
+	        echo '<td class="supported">Y</td>'   >> $@;,       \
+	        echo '<td class="unsupported">N</td>' >> $@;)       \
+	    $(if $($(PKG)_VIRTUAL),                  \
+	        $(eval VIRTUAL_PKGCOUNT := $(call inc,$(VIRTUAL_PKGCOUNT)))) \
+	    $(if $($(PKG)_BUILD_ONLY),               \
+	        $(eval BUILD_ONLY_PKGCOUNT := $(call inc,$(BUILD_ONLY_PKGCOUNT)))))
+	@echo '<tr>'                            >> $@
+	# TOTAL_PKGCOUNT = ( PKGS - VIRTUAL ) - BUILD_ONLY
+	$(eval TOTAL_PKGCOUNT :=                     \
+	    $(call subtract,                         \
+	        $(call subtract,$(words $(PKGS)),$(VIRTUAL_PKGCOUNT)),\
+	        $(BUILD_ONLY_PKGCOUNT)))
+	@echo '<th class="row">'                >> $@
+	@echo 'Total: $(TOTAL_PKGCOUNT)<br>(+$(VIRTUAL_PKGCOUNT) virtual +$(BUILD_ONLY_PKGCOUNT) native-only)' >> $@
+	@echo '</th>'                           >> $@
+	@$(foreach TARGET,$(MXE_TARGET_LIST),        \
+	    echo '<th>$($(TARGET)_PKGCOUNT)</th>' >> $@;)
+	@echo '<th>$(BUILD_PKGCOUNT)</th>'      >> $@
+	@echo '</tr>'                           >> $@
+	@echo '</tbody>'                        >> $@
+	@echo '</table>'                        >> $@
+	@echo '</body>'                         >> $@
 

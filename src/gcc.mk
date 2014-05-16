@@ -3,8 +3,8 @@
 
 PKG             := gcc
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.8.2
-$(PKG)_CHECKSUM := 810fb70bd721e1d9f446b6503afe0a9088b62986
+$(PKG)_VERSION  := 4.9.0
+$(PKG)_CHECKSUM := fbde8eb49f2b9e6961a870887cf7337d31cd4917
 $(PKG)_SUBDIR   := gcc-$($(PKG)_VERSION)
 $(PKG)_FILE     := gcc-$($(PKG)_VERSION).tar.bz2
 $(PKG)_URL      := ftp://ftp.gnu.org/pub/gnu/gcc/gcc-$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -58,8 +58,8 @@ define $(PKG)_POST_BUILD
     # TODO: find a way to configure the installation of these correctly
     rm -f $(addprefix $(PREFIX)/$(TARGET)/bin/, c++ g++ gcc gfortran)
     -mv '$(PREFIX)/lib/gcc/$(TARGET)/lib/'* '$(PREFIX)/lib/gcc/$(TARGET)/$($(PKG)_VERSION)/'
-    -cp '$(PREFIX)/lib/gcc/$(TARGET)/'*.dll '$(PREFIX)/$(TARGET)/bin/'
     -mv '$(PREFIX)/lib/gcc/$(TARGET)/'*.dll '$(PREFIX)/lib/gcc/$(TARGET)/$($(PKG)_VERSION)/'
+    -cp '$(PREFIX)/lib/gcc/$(TARGET)/$($(PKG)_VERSION)/'*.dll '$(PREFIX)/$(TARGET)/bin/'
 endef
 
 define $(PKG)_BUILD_i686-pc-mingw32

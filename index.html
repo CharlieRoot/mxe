@@ -98,25 +98,41 @@
 
     <table id="supported-toolchains">
     <tr>
-        <th>Runtime</th>
-        <th>Host Triplet</th>
-        <th>Packages</th>
+        <th rowspan="2">Runtime</th>
+        <th rowspan="2">Host Triplet</th>
+        <th colspan="2">Packages</th>
     </tr>
     <tr>
-        <td><a href="http://www.mingw.org/">MinGW 3x</a></td>
+        <th>Static</th>
+        <th>Shared*</th>
+    </tr>
+    <tr>
+        <td><a href="http://www.mingw.org/">MinGW 3.x</a></td>
         <td>i686-pc-mingw32</td>
-        <td style='text-align:center'>301</td>
+        <td style='text-align:center'>97% (314/323)</td>
+        <td style='text-align:center'>50% (162/323)</td>
     </tr>
     <tr>
         <td rowspan="2"><a href="http://mingw-w64.sourceforge.net/">MinGW-w64</a></td>
         <td>i686-w64-mingw32</td>
-        <td style='text-align:center'>288</td>
+        <td style='text-align:center'>95% (308/323)</td>
+        <td style='text-align:center'>52% (167/323)</td>
     </tr>
     <tr>
         <td>x86_64-w64-mingw32</td>
-        <td style='text-align:center'>266</td>
+        <td style='text-align:center'>89% (286/323)</td>
+        <td style='text-align:center'>51% (165/323)</td>
     </tr>
     </table>
+    <p>
+        These numbers are last updated on May 4, 2014. You can see the current
+        status by executing <code>make build-matrix.html</code> in the MXE
+        directory.
+    </p>
+    <p><small>
+        * Shared support in MXE was just added in early February, 2014. These
+        numbers are expected to rise significantly.
+    </small></p>
 
 </div>
 
@@ -999,6 +1015,13 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
         suitable for usage in shell scripts
         </dd>
 
+    <dt>make build-matrix.html</dt>
+
+        <dd>
+        generate a report of what packages are
+        supported on what targets to build-matrix.html
+        </dd>
+
     <dt>make update</dt>
 
         <dd>
@@ -1213,6 +1236,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
     <tr>
         <td class="package">faad2</td>
         <td class="website"><a href="http://www.audiocoding.com/">faad2</a></td>
+    </tr>
+    <tr>
+        <td class="package">fdk-aac</td>
+        <td class="website"><a href="https://github.com/mstorsjo/fdk-aac">FDK-AAC</a></td>
     </tr>
     <tr>
         <td class="package">ffmpeg</td>
@@ -1525,6 +1552,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
     <tr>
         <td class="package">libdnet</td>
         <td class="website"><a href="http://libdnet.sourceforge.net/">libdnet</a></td>
+    </tr>
+    <tr>
+        <td class="package">libdvbpsi</td>
+        <td class="website"><a href="http://www.videolan.org/developers/libdvbpsi.html">libdvbpsi</a></td>
     </tr>
     <tr>
         <td class="package">libdvdcss</td>
@@ -2747,7 +2778,7 @@ endef</pre>
     <li>Mark Brand</li>
     <li>Tony Theodore</li>
     <li>Martin Gerhardy</li>
-    <li>Timothy Gu</li>
+    <li>Tiancheng "Timothy" Gu</li>
     <li><a href="https://www.ohloh.net/p/mxe/contributors">... and many other contributors</a></li>
     </ul>
 
@@ -2943,6 +2974,9 @@ endef</pre>
     <a href="http://www.gnu.org/licenses/license-list.html#OpenSSL">FSF</a>
     and the
     <a href="http://www.openssl.org/support/faq.html#LEGAL2">OpenSSL project</a>.
+    </p>
+    <p>
+    A similar situation also exists for package fdk-aac.
     </p>
 </div>
 
