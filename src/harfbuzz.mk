@@ -3,12 +3,12 @@
 
 PKG             := harfbuzz
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 0.9.27
-$(PKG)_CHECKSUM := e5bb66040c201895d72f717e0f1fd3fea5544053
+$(PKG)_VERSION  := 0.9.29
+$(PKG)_CHECKSUM := fbb4e533f0f838c456fbe37751ec2dbf95c8e182
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.bz2
 $(PKG)_URL      := http://www.freedesktop.org/software/$(PKG)/release/$($(PKG)_FILE)
-$(PKG)_DEPS     := gcc glib cairo freetype icu4c
+$(PKG)_DEPS     := gcc glib cairo freetype-bootstrap icu4c
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'http://cgit.freedesktop.org/harfbuzz/refs/tags' | \
@@ -22,4 +22,6 @@ define $(PKG)_BUILD
         $(MXE_CONFIGURE_OPTS) \
         LIBS='-lstdc++'
     $(MAKE) -C '$(1)' -j '$(JOBS)' install
+    # alias for this library will help qmake deal with the freetype/harfbuzz linking circularity
+    ln -sf libharfbuzz.a '$(PREFIX)/$(TARGET)/lib/libharfbuzz_too.a'
 endef
