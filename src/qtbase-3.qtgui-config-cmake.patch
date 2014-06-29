@@ -1,5 +1,5 @@
 diff --git a/src/gui/Qt5GuiConfigExtras.cmake.in b/src/gui/Qt5GuiConfigExtras.cmake.in
-index 75a2385..7c4f0a6 100644
+index d734e56..7166e2e 100644
 --- a/src/gui/Qt5GuiConfigExtras.cmake.in
 +++ b/src/gui/Qt5GuiConfigExtras.cmake.in
 @@ -98,9 +98,6 @@ macro(_qt5gui_find_extra_libs Name Libs LibDir IncDirs)
@@ -12,13 +12,13 @@ index 75a2385..7c4f0a6 100644
  !!ENDIF
              )
  !!IF mac
-@@ -127,9 +124,6 @@ macro(_qt5gui_find_extra_libs Name Libs LibDir IncDirs)
+@@ -135,9 +132,6 @@ macro(_qt5gui_find_extra_libs Name Libs LibDir IncDirs)
  
-             find_library(Qt5Gui_${_cmake_lib_name}_LIBRARY_DEBUG ${_lib}d
-                 PATHS \"${LibDir}\"
+                 find_library(Qt5Gui_${_cmake_lib_name}_LIBRARY_DEBUG ${_lib}d
+                     PATHS \"${LibDir}\"
 -!!IF !mac
--                NO_DEFAULT_PATH
+-                    NO_DEFAULT_PATH
 -!!ENDIF
-             )
-             if (Qt5Gui_${_cmake_lib_name}_LIBRARY_DEBUG)
-                 set_property(TARGET Qt5::Gui_${_cmake_lib_name} APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+                 )
+                 if (Qt5Gui_${_cmake_lib_name}_LIBRARY_DEBUG)
+                     set_property(TARGET Qt5::Gui_${_cmake_lib_name} APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
