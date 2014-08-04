@@ -3,8 +3,8 @@
 
 PKG             := libdvdnav
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := d0449a9
-$(PKG)_CHECKSUM := ca5f7ef018a428af8f558cbc23af750cf6b322fc
+$(PKG)_VERSION  := b945868
+$(PKG)_CHECKSUM := 5d55e5f2c1d9872742b6e2907722097c62bf40d6
 $(PKG)_SUBDIR   := mirror-$(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := https://github.com/mirror/$(PKG)/tarball/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -17,11 +17,7 @@ $(PKG)_URL      := https://github.com/mirror/$(PKG)/tarball/$($(PKG)_VERSION)/$(
 # $(PKG)_URL      := https://dvdnav.mplayerhq.hu/releases/$($(PKG)_FILE)
 $(PKG)_DEPS     := gcc libdvdread
 
-define $(PKG)_UPDATE
-    $(WGET) -q -O- 'https://github.com/mirror/libdvdnav/commits/master' | \
-    $(SED) -n 's#.*<span class="sha">\([^<]\{7\}\)[^<]\{3\}<.*#\1#p' | \
-    head -1
-endef
+$(PKG)_UPDATE    = $(call MXE_GET_GITHUB_SHA, mirror/libdvdnav, master)
 
 define $(PKG)_UPDATE_RELEASE
     $(WGET) -q -O- 'https://dvdnav.mplayerhq.hu/releases/' | \

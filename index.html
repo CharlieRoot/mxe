@@ -1542,6 +1542,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
         <td class="website"><a href="http://www.videolan.org/developers/libbluray.html">libbluray</a></td>
     </tr>
     <tr>
+        <td class="package">libcaca</td>
+        <td class="website"><a href="http://caca.zoy.org/wiki/libcaca">libcaca</a></td>
+    </tr>
+    <tr>
         <td class="package">libcdio</td>
         <td class="website"><a href="https://www.gnu.org/software/libcdio/">Libcdio</a></td>
     </tr>
@@ -2080,6 +2084,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
     <tr>
         <td class="package">qjson</td>
         <td class="website"><a href="http://qjson.sourceforge.net/">QJson</a></td>
+    </tr>
+    <tr>
+        <td class="package">qscintilla2</td>
+        <td class="website"><a href="http://www.riverbankcomputing.com/software/qscintilla/intro">QScintilla2</a></td>
     </tr>
     <tr>
         <td class="package">qt</td>
@@ -3008,6 +3016,36 @@ endef</pre>
 <h2 id="history">History</h2>
 
     <dl>
+
+<!--
+    <dt>2014-xx-xx &ndash; Release <span id="latest-version">2.23</span></dt>
+    <dd>
+        <p>
+        The <a href="#download">stable branch</a> was updated
+        to the current development version after a thorough
+        <a href="https://lists.nongnu.org/archive/html/mingw-cross-env-list/2013-07/msg00021.html">testing phase</a>.
+        </p>
+
+        <p>
+        Current users are <strong>strongly</strong> encouraged to
+        start with a clean tree as the toolchain has been
+        updated and requires a full rebuild:
+        </p>
+        <pre>git pull && make clean && make</pre>
+
+        <p>
+        Most packages were updated to their latest version.
+        </p>
+
+        <p>
+        Many new packages are supported:
+        ...
+        </p>
+
+        <p>
+        Added support for <a href="#supported-toolchains">shared toolchains</a>.
+    </dd>
+-->
 
     <dt>2013-07-27 &ndash; Release <span id="latest-version">2.23</span></dt>
     <dd>
