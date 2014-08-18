@@ -53,6 +53,9 @@ define $(PKG)_BUILD
             -licuin -licuuc -licudt ) " \
         stage install
 
+    $(if $(BUILD_SHARED), \
+        mv -fv '$(PREFIX)/$(TARGET)/lib/'libboost_*.dll '$(PREFIX)/$(TARGET)/bin/')
+
     '$(TARGET)-g++' \
         -W -Wall -Werror -ansi -U__STRICT_ANSI__ -pedantic \
         '$(2).cpp' -o '$(PREFIX)/$(TARGET)/bin/test-boost.exe' \
