@@ -3,8 +3,8 @@
 
 PKG             := boost
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.55.0
-$(PKG)_CHECKSUM := cef9a0cc7084b1d639e06cd3bc34e4251524c840
+$(PKG)_VERSION  := 1.56.0
+$(PKG)_CHECKSUM := f94bb008900ed5ba1994a1072140590784b9b5df
 $(PKG)_SUBDIR   := boost_$(subst .,_,$($(PKG)_VERSION))
 $(PKG)_FILE     := boost_$(subst .,_,$($(PKG)_VERSION)).tar.bz2
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/boost/boost/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -22,8 +22,8 @@ define $(PKG)_BUILD
     rm -rf '$(PREFIX)/$(TARGET)/include/boost/'
     echo 'using gcc : : $(TARGET)-g++ : <rc>$(TARGET)-windres <archiver>$(TARGET)-ar <ranlib>$(TARGET)-ranlib ;' > '$(1)/user-config.jam'
     # compile boost jam
-    cd '$(1)/tools/build/v2/engine' && ./build.sh
-    cd '$(1)' && tools/build/v2/engine/bin.*/bjam \
+    cd '$(1)/tools/build/src/engine' && ./build.sh
+    cd '$(1)' && tools/build/src/engine/bin.*/bjam \
         -j '$(JOBS)' \
         --ignore-site-config \
         --user-config=user-config.jam \
