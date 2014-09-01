@@ -68,6 +68,48 @@ MXE_CONFIGURE_OPTS = \
         --enable-static --disable-shared , \
         --disable-static --enable-shared )
 
+# Append these to the "make" and "make install" steps of autotools packages
+# in order to neither build nor install unwanted binaries, manpages,
+# infopages and API documentation (reduces build time and disk space usage).
+# NOTE: We don't include bin_SCRIPTS (and variations), since many packages
+# install files such as pcre-config (which we do want to be installed).
+
+MXE_DISABLE_PROGRAMS = \
+    bin_PROGRAMS= \
+    sbin_PROGRAMS= \
+    noinst_PROGRAMS= \
+    check_PROGRAMS=
+
+MXE_DISABLE_DOCS = \
+    man_MANS= \
+    man1_MANS= \
+    man2_MANS= \
+    man3_MANS= \
+    man4_MANS= \
+    man5_MANS= \
+    man6_MANS= \
+    man7_MANS= \
+    man8_MANS= \
+    man9_MANS= \
+    dist_man_MANS= \
+    dist_man1_MANS= \
+    dist_man2_MANS= \
+    dist_man3_MANS= \
+    dist_man4_MANS= \
+    dist_man5_MANS= \
+    dist_man6_MANS= \
+    dist_man7_MANS= \
+    dist_man8_MANS= \
+    dist_man9_MANS= \
+    notrans_dist_man_MANS= \
+    info_TEXINFOS= \
+    doc_DATA= \
+    dist_doc_DATA= \
+    html_DATA= \
+    dist_html_DATA=
+
+MXE_DISABLE_CRUFT = $(MXE_DISABLE_PROGRAMS) $(MXE_DISABLE_DOCS)
+
 MAKE_SHARED_FROM_STATIC = \
 	'$(TOP_DIR)/tools/make-shared-from-static' \
 	$(if $(findstring mingw,$(TARGET)),--windowsdll) \
@@ -113,16 +155,18 @@ CHECK_PKG_ARCHIVE = \
 ESCAPE_PKG = \
 	echo '$($(1)_FILE)' | perl -lpe 's/([^A-Za-z0-9])/sprintf("%%%02X", ord($$$$1))/seg'
 
+BACKUP_DOWNLOAD = \
+    $(WGET) -O- $(PKG_MIRROR)/`$(call ESCAPE_PKG,$(1))` || \
+    $(WGET) -O- $(PKG_CDN)/`$(call ESCAPE_PKG,$(1))`
+
 DOWNLOAD_PKG_ARCHIVE = \
-        mkdir -p '$(PKG_DIR)' && \
-        $(if $($(1)_URL_2), \
-            ( $(WGET) -T 30 -t 3 -O- '$($(1)_URL)' || \
-              $(WGET) -T 30 -t 3 -O- '$($(1)_URL_2)' || \
-              $(WGET) -O- $(PKG_MIRROR)/`$(call ESCAPE_PKG,$(1))` || \
-              $(WGET) -O- $(PKG_CDN)/`$(call ESCAPE_PKG,$(1))` ), \
-            ( $(WGET) -T 30 -t 3 -O- '$($(1)_URL)' || \
-              $(WGET) -O- $(PKG_MIRROR)/`$(call ESCAPE_PKG,$(1))` || \
-              $(WGET) -O- $(PKG_CDN)/`$(call ESCAPE_PKG,$(1))` )) \
+        mkdir -p '$(PKG_DIR)' && ( \
+            $(WGET) -T 30 -t 3 -O- '$($(1)_URL)' \
+            $(if $($(1)_URL_2), \
+                || $(WGET) -T 30 -t 3 -O- '$($(1)_URL_2)') \
+            $(if $(MXE_NO_BACKUP_DL),, \
+                || $(BACKUP_DOWNLOAD)) \
+        ) \
         $(if $($(1)_FIX_GZIP), \
             | gzip -d | gzip -9n, \
             ) \
@@ -276,7 +320,11 @@ $(foreach TARGET,$(MXE_TARGETS),$(eval $(call TARGET_RULE,$(TARGET))))
 
 define PKG_RULE
 .PHONY: download-$(1)
-download-$(1):: $(addprefix download-,$(value $(call LOOKUP_PKG_RULE,$(1),DEPS,$(3))))
+download-$(1):: $(addprefix download-,$(value $(call LOOKUP_PKG_RULE,$(1),DEPS,$(3)))) \
+                download-only-$(1)
+
+.PHONY: download-only-$(1)
+download-only-$(1)::
 	@[ -d '$(LOG_DIR)/$(TIMESTAMP)' ] || mkdir -p '$(LOG_DIR)/$(TIMESTAMP)'
 	@if ! $(call CHECK_PKG_ARCHIVE,$(1)); then \
 	    echo '[download] $(1)'; \

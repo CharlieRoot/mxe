@@ -2,11 +2,11 @@
 # See index.html for further information.
 PKG             := qtservice
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := fd22bee22274975c56f1c10d87ee9fd2c0818f83
-$(PKG)_CHECKSUM := 95a114f14296faa4a395c1f27b2bd8aa1ddd768d
-$(PKG)_SUBDIR   := qt-solutions-qt-solutions
-$(PKG)_FILE     := $($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := https://qt.gitorious.org/qt-solutions/qt-solutions/archive/$($(PKG)_FILE)
+$(PKG)_VERSION  := fd22bee
+$(PKG)_CHECKSUM := 0d83dc54d692da3557213144140e74a63a6f4911
+$(PKG)_SUBDIR   := qtproject-qt-solutions-$($(PKG)_VERSION)
+$(PKG)_FILE     := qt-solutions-$($(PKG)_VERSION).tar.gz
+$(PKG)_URL      := https://github.com/qtproject/qt-solutions/tarball/$($(PKG)_VERSION)/$($(PKG)_FILE)
 $(PKG)_DEPS     := gcc qtbase
 
 define $(PKG)_UPDATE
