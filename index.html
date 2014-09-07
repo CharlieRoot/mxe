@@ -109,25 +109,25 @@
     <tr>
         <td><a href="http://www.mingw.org/">MinGW 3.x</a></td>
         <td>i686-pc-mingw32</td>
-        <td style='text-align:center'>97% (314/323)</td>
-        <td style='text-align:center'>50% (162/323)</td>
+        <td style='text-align:center'>96% (327/340)</td>
+        <td style='text-align:center'>55% (188/340)</td>
     </tr>
     <tr>
         <td rowspan="2"><a href="http://mingw-w64.sourceforge.net/">MinGW-w64</a></td>
         <td>i686-w64-mingw32</td>
-        <td style='text-align:center'>95% (308/323)</td>
-        <td style='text-align:center'>52% (167/323)</td>
+        <td style='text-align:center'>96% (325/340)</td>
+        <td style='text-align:center'>58% (196/340)</td>
     </tr>
     <tr>
         <td>x86_64-w64-mingw32</td>
-        <td style='text-align:center'>89% (286/323)</td>
-        <td style='text-align:center'>51% (165/323)</td>
+        <td style='text-align:center'>89% (303/340)</td>
+        <td style='text-align:center'>57% (194/340)</td>
     </tr>
     </table>
     <p>
-        These numbers are last updated on May 4, 2014. You can see the current
-        status by executing <code>make build-matrix.html</code> in the MXE
-        directory.
+        These numbers were last updated on September 2, 2014. You can see the
+        current status by executing <code>make build-matrix.html</code> in the
+        MXE directory.
     </p>
     <p><small>
         * Shared support in MXE was just added in early February, 2014. These
@@ -182,6 +182,11 @@
     MXE builds and installs everything under the same
     top-level directory and is not relocatable after
     the first packages are built.
+    </p>
+
+    <p>
+    Due to limitations of GNU Make, the path of MXE is not allowed
+    to contain any whitespace characters.
     </p>
 
     <h3 id="tutorial-2">Step 2: System-wide Installation (optional)</h3>
@@ -1160,6 +1165,10 @@ local-pkg-list: $(LOCAL_PKG_LIST)</pre>
     <tr>
         <td class="package">cblas</td>
         <td class="website"><a href="http://www.netlib.org/blas/">cblas</a></td>
+    </tr>
+    <tr>
+        <td class="package">chipmunk</td>
+        <td class="website"><a href="https://chipmunk-physics.net/">Chipmunk Physics</a></td>
     </tr>
     <tr>
         <td class="package">chromaprint</td>

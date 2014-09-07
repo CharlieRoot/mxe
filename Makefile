@@ -16,7 +16,7 @@ MXE_TARGET_LIST    := $(foreach TRIPLET,$(MXE_TRIPLETS),\
 MXE_TARGETS        := i686-pc-mingw32.static
 
 DEFAULT_MAX_JOBS   := 6
-SOURCEFORGE_MIRROR := freefr.dl.sourceforge.net
+SOURCEFORGE_MIRROR := downloads.sourceforge.net
 PKG_MIRROR         := s3.amazonaws.com/mxe-pkg
 PKG_CDN            := d1yihgixbnrglp.cloudfront.net
 
@@ -175,6 +175,10 @@ DOWNLOAD_PKG_ARCHIVE = \
           echo 'Download failed!'; \
           echo; \
           rm -f '$(PKG_DIR)/$($(1)_FILE)'; )
+
+ifneq ($(words $(PWD)),1)
+    $(error GNU Make chokes on paths with spaces)
+endif
 
 ifeq ($(IGNORE_SETTINGS),yes)
     $(info [ignore settings.mk])
