@@ -7,7 +7,7 @@ $(PKG)_VERSION  := 2.8.2
 $(PKG)_CHECKSUM := cfb24bfec54ea869bc3a326b9a935fc25aea7bec
 $(PKG)_SUBDIR   := QScintilla-gpl-$($(PKG)_VERSION)
 $(PKG)_FILE     := QScintilla-gpl-$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/pyqt/QScintilla2/QScintilla-$($(PKG)_VERSION)/$($(PKG)_FILE) 
+$(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/pyqt/QScintilla2/QScintilla-$($(PKG)_VERSION)/$($(PKG)_FILE)
 
 $(PKG)_DEPS     := gcc qtbase
 
@@ -30,4 +30,3 @@ define $(PKG)_BUILD
 	`'$(TARGET)-pkg-config' Qt5Widgets --libs`
 endef
 
-$(PKG)_BUILD_i686-pc-mingw32 =
