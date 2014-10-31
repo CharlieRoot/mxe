@@ -69,8 +69,8 @@ define $(PKG)_BUILD
     # Detecting if these GLib tools are already available on host machine,
     # either because of a host package installation or from an earlier MXE
     # installation of GLib.
-	# If it is installed, we symlink it into the MXE bin/.
-	# If not, we build it.
+    # If it is installed, we symlink it into the MXE bin/.
+    # If not, we build it.
     $(if $(findstring y,\
             $(shell [ -x "`which glib-genmarshal`" ] && \
                     [ -x "`which glib-compile-schemas`" ] && \
@@ -89,7 +89,8 @@ define $(PKG)_BUILD
         PKG_CONFIG='$(PREFIX)/bin/$(TARGET)-pkg-config' \
         GLIB_GENMARSHAL='$(PREFIX)/$(TARGET)/bin/glib-genmarshal' \
         GLIB_COMPILE_SCHEMAS='$(PREFIX)/$(TARGET)/bin/glib-compile-schemas' \
-        GLIB_COMPILE_RESOURCES='$(PREFIX)/$(TARGET)/bin/glib-compile-resources'
+        GLIB_COMPILE_RESOURCES='$(PREFIX)/$(TARGET)/bin/glib-compile-resources' \
+        $(if $(findstring w64-mingw32,$(TARGET)),  CFLAGS="-DHAVE_IF_NAMETOINDEX=1")
     $(MAKE) -C '$(1)/glib'    -j '$(JOBS)' install sbin_PROGRAMS= noinst_PROGRAMS=
     $(MAKE) -C '$(1)/gmodule' -j '$(JOBS)' install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
     $(MAKE) -C '$(1)/gthread' -j '$(JOBS)' install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
