@@ -34,8 +34,8 @@ $(PKG)_MAKE_OPTS = \
         DYNAMIC_ARCH=1 \
         ARCH=$(strip \
              $(if $(findstring x86_64,$(TARGET)),x86_64,\
-             $(if $(findstring i686,$(TARGET)),x86)) \
-        BINARY=$(if $(findstring x86_64,$(TARGET)),64,32)) \
+             $(if $(findstring i686,$(TARGET)),x86))) \
+        BINARY=$(BITS) \
         $(if $(BUILD_STATIC),NO_SHARED=1) \
         $(if $(BUILD_SHARED),NO_STATIC=1) \
         EXTRALIB="`'$(TARGET)-pkg-config' --libs pthreads` -fopenmp"
