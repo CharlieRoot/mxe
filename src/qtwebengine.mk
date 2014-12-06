@@ -1,14 +1,14 @@
 # This file is part of MXE.
 # See index.html for further information.
 
-PKG             := qtquick1
+PKG             := qtwebengine
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION   = $(qtbase_VERSION)
-$(PKG)_CHECKSUM := aa557832e64fa035337bb83ab9c8eb9fbf078653
-$(PKG)_SUBDIR    = $(subst qtbase,qtquick1,$(qtbase_SUBDIR))
-$(PKG)_FILE      = $(subst qtbase,qtquick1,$(qtbase_FILE))
-$(PKG)_URL       = $(subst qtbase,qtquick1,$(qtbase_URL))
-$(PKG)_DEPS     := gcc qtbase qtscript qtsvg qttools qtxmlpatterns
+$(PKG)_CHECKSUM := 6071cf8c06a1866689c7799c60e0ef8e09dcf70f
+$(PKG)_SUBDIR    = $(subst qtbase,qtwebengine,$(qtbase_SUBDIR))
+$(PKG)_FILE      = $(subst qtbase,qtwebengine,$(qtbase_FILE))
+$(PKG)_URL       = $(subst qtbase,qtwebengine,$(qtbase_URL))
+$(PKG)_DEPS     := gcc qtbase qtquickcontrols qtwebkit
 
 define $(PKG)_UPDATE
     echo $(qtbase_VERSION)

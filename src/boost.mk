@@ -3,8 +3,8 @@
 
 PKG             := boost
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.56.0
-$(PKG)_CHECKSUM := f94bb008900ed5ba1994a1072140590784b9b5df
+$(PKG)_VERSION  := 1.57.0
+$(PKG)_CHECKSUM := e151557ae47afd1b43dc3fac46f8b04a8fe51c12
 $(PKG)_SUBDIR   := boost_$(subst .,_,$($(PKG)_VERSION))
 $(PKG)_FILE     := boost_$(subst .,_,$($(PKG)_VERSION)).tar.bz2
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/boost/boost/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -20,20 +20,32 @@ endef
 define $(PKG)_BUILD
     # old version appears to interfere
     rm -rf '$(PREFIX)/$(TARGET)/include/boost/'
-    echo 'using gcc : : $(TARGET)-g++ : <rc>$(TARGET)-windres <archiver>$(TARGET)-ar <ranlib>$(TARGET)-ranlib ;' > '$(1)/user-config.jam'
-    # compile boost jam
-    cd '$(1)/tools/build/src/engine' && ./build.sh
-    cd '$(1)' && tools/build/src/engine/bin.*/bjam \
+    rm -f "$(PREFIX)/$(TARGET)/lib/libboost*"
+
+    # create user-config
+    echo 'using gcc : mxe : $(TARGET)-g++ : <rc>$(TARGET)-windres <archiver>$(TARGET)-ar <ranlib>$(TARGET)-ranlib ;' > '$(1)/user-config.jam'
+
+    # compile boost build (b2)
+    cd '$(1)/tools/build/' && ./bootstrap.sh
+
+    # cross-build, see b2 options at:
+    # http://www.boost.org/build/doc/html/bbv2/overview/invocation.html
+    cd '$(1)' && ./tools/build/b2 \
+        -a \
+        -q \
         -j '$(JOBS)' \
         --ignore-site-config \
         --user-config=user-config.jam \
-        cxxflags=-std=gnu++11 \
-        target-os=windows \
-        threading=multi \
+        address-model=$(BITS) \
+        architecture=x86 \
+        binary-format=pe \
         $(if $(BUILD_STATIC), \
-            link=static define=U_STATIC_IMPLEMENTATION=1 , \
-            link=shared ) \
+            link=static runtime-link=static define=U_STATIC_IMPLEMENTATION=1 , \
+            link=shared runtime-link=shared ) \
+        target-os=windows \
         threadapi=win32 \
+        threading=multi \
+        toolset=gcc-mxe \
         --layout=tagged \
         --without-context \
         --without-coroutine \
@@ -51,7 +63,8 @@ define $(PKG)_BUILD
         $(if $(BUILD_STATIC), \
             -lsicuin -lsicuuc -lsicudt , \
             -licuin -licuuc -licudt ) " \
-        stage install
+        cxxflags='-std=c++11' \
+        install
 
     $(if $(BUILD_SHARED), \
         mv -fv '$(PREFIX)/$(TARGET)/lib/'libboost_*.dll '$(PREFIX)/$(TARGET)/bin/')
