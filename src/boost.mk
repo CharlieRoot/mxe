@@ -20,7 +20,7 @@ endef
 define $(PKG)_BUILD
     # old version appears to interfere
     rm -rf '$(PREFIX)/$(TARGET)/include/boost/'
-    rm -f "$(PREFIX)/$(TARGET)/lib/libboost*"
+    rm -f "$(PREFIX)/$(TARGET)/lib/libboost"*
 
     # create user-config
     echo 'using gcc : mxe : $(TARGET)-g++ : <rc>$(TARGET)-windres <archiver>$(TARGET)-ar <ranlib>$(TARGET)-ranlib ;' > '$(1)/user-config.jam'
@@ -40,8 +40,8 @@ define $(PKG)_BUILD
         architecture=x86 \
         binary-format=pe \
         $(if $(BUILD_STATIC), \
-            link=static runtime-link=static define=U_STATIC_IMPLEMENTATION=1 , \
-            link=shared runtime-link=shared ) \
+            link=static define=U_STATIC_IMPLEMENTATION=1 , \
+            link=shared ) \
         target-os=windows \
         threadapi=win32 \
         threading=multi \
@@ -68,6 +68,10 @@ define $(PKG)_BUILD
 
     $(if $(BUILD_SHARED), \
         mv -fv '$(PREFIX)/$(TARGET)/lib/'libboost_*.dll '$(PREFIX)/$(TARGET)/bin/')
+
+    # setup cmake toolchain
+    $(SED) -i '/Boost_THREADAPI/d' '$(CMAKE_TOOLCHAIN_FILE)'
+    echo 'set(Boost_THREADAPI "win32")' >> '$(CMAKE_TOOLCHAIN_FILE)'
 
     '$(TARGET)-g++' \
         -W -Wall -Werror -ansi -U__STRICT_ANSI__ -pedantic \
