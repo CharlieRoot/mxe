@@ -30,6 +30,7 @@ define $(PKG)_BUILD
             -device-option PKG_CONFIG='${TARGET}-pkg-config' \
             -c++11 \
             -force-pkg-config \
+            -no-use-gold-linker \
             -release \
             -static \
             -optimized-qmake \
