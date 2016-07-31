@@ -3,17 +3,18 @@
 
 PKG             := wt
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.3.1
-$(PKG)_CHECKSUM := 0ae889c1411864d783962d4878b90efbce7f3382
+$(PKG)_VERSION  := 3.3.6
+$(PKG)_CHECKSUM := 8f82576076deb1d72cfb8ff42cf7ffb3553a45da32123b2a3cf36e66040678ab
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/witty/$($(PKG)_FILE)
-$(PKG)_DEPS     := gcc boost openssl libharu graphicsmagick pango postgresql qt sqlite
+$(PKG)_URL      := https://github.com/kdeforche/wt/archive/$($(PKG)_VERSION).tar.gz
+$(PKG)_DEPS     := gcc boost graphicsmagick libharu openssl pango postgresql qt sqlite
 
 define $(PKG)_UPDATE
-    $(WGET) -q -O- 'http://sourceforge.net/projects/witty/files/wt/' | \
-    $(SED) -n 's,.*<a href="/projects/witty/files/wt/\([0-9][^>]*\)/.*,\1,p' | \
-    head -1
+    $(call MXE_GET_GITHUB_ALL_TAGS, kdeforche/wt) \
+    | grep -v 'rc' \
+    | $(SORT) -V \
+    | tail -1
 endef
 
 define $(PKG)_BUILD
@@ -23,8 +24,8 @@ define $(PKG)_BUILD
         -DCONFIGDIR='$(PREFIX)/$(TARGET)/etc/wt' \
         -DBUILD_EXAMPLES=OFF \
         -DBUILD_TESTS=OFF \
-        -DSHARED_LIBS=OFF \
-        -DBOOST_DYNAMIC=OFF \
+        -DSHARED_LIBS=$(if $(BUILD_STATIC),OFF,ON) \
+        -DBOOST_DYNAMIC=$(if $(BUILD_STATIC),OFF,ON) \
         -DBOOST_PREFIX='$(PREFIX)/$(TARGET)' \
         -DBOOST_COMPILER=_win32 \
         -DSSL_PREFIX='$(PREFIX)/$(TARGET)' \
@@ -39,7 +40,3 @@ define $(PKG)_BUILD
     $(MAKE) -C '$(1).build' -j '$(JOBS)' VERBOSE=1 || $(MAKE) -C '$(1).build' -j 1 VERBOSE=1
     $(MAKE) -C '$(1).build' -j 1 install VERBOSE=1
 endef
-
-$(PKG)_BUILD_x86_64-w64-mingw32 =
-
-$(PKG)_BUILD_SHARED =

@@ -3,12 +3,12 @@
 
 PKG             := gsoap
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2.8.21
-$(PKG)_CHECKSUM := a464cc7dee6847544faf84466968a739028bf3cb
+$(PKG)_VERSION  := 2.8.22
+$(PKG)_CHECKSUM := 30b045af2633ac5e92ea92fdb4baad784afe6e6548b5ef2f9cad48df6a7d3e48
 $(PKG)_SUBDIR   := gsoap-$(call SHORT_PKG_VERSION,$(PKG))
 $(PKG)_FILE     := gsoap_$($(PKG)_VERSION).zip
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/gsoap2/gSOAP/$($(PKG)_FILE)
-$(PKG)_DEPS     := gcc gnutls libgcrypt libntlm
+$(PKG)_DEPS     := gcc libgcrypt libntlm openssl
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'http://sourceforge.net/projects/gsoap2/files/gSOAP/' | \
@@ -35,6 +35,10 @@ define $(PKG)_BUILD
 
     # fix hard-coded gnutls dependencies
     $(SED) -i "s/-lgnutls/`'$(TARGET)-pkg-config' --libs-only-l gnutls`/g;" '$(1)/configure'
+    $(SED) -i "s^-lgpg-error^`'$(TARGET)-gpg-error-config' --libs`^g;" '$(1)/configure'
+
+    # fix hard-coded openssl dependencies
+    $(SED) -i "s^-lssl -lcrypto^`'$(TARGET)-pkg-config' --libs-only-l openssl`^g;" '$(1)/configure'
 
     # the cross build will need soapcpp2, not soapcpp2.exe
     $(SED) -i "s,^\(SOAP = \$$(top_builddir)/gsoap/src/soapcpp2\)\$$(EXEEXT)$$,\1,;" '$(1)/gsoap/wsdl/Makefile.in'
@@ -46,8 +50,7 @@ define $(PKG)_BUILD
         --prefix='$(PREFIX)/$(TARGET)' \
         --host='$(TARGET)' \
         --build="`config.guess`" \
-        --enable-gnutls \
-        CPPFLAGS='-DWITH_NTLM'
+        CPPFLAGS='-DWITH_NTLM -DSOAP_SSLv3=0x40'
 
     # Building for mingw requires native soapcpp2
     ln -sf '$(PREFIX)/bin/$(TARGET)-soapcpp2' '$(1)/gsoap/src/soapcpp2'

@@ -3,8 +3,8 @@
 
 PKG             := pcre
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 8.36
-$(PKG)_CHECKSUM := 9a074e9cbf3eb9f05213fd9ca5bc188644845ccc
+$(PKG)_VERSION  := 8.39
+$(PKG)_CHECKSUM := b858099f82483031ee02092711689e7245586ada49e534a06e678b8ea9549e8b
 $(PKG)_SUBDIR   := pcre-$($(PKG)_VERSION)
 $(PKG)_FILE     := pcre-$($(PKG)_VERSION).tar.bz2
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/pcre/pcre/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -23,7 +23,7 @@ define $(PKG)_BUILD_SHARED
         --enable-pcre16 \
         --enable-utf \
         --enable-unicode-properties \
-        --disable-cpp \
+        --enable-cpp \
         --disable-pcregrep-libz \
         --disable-pcregrep-libbz2 \
         --disable-pcretest-libreadline

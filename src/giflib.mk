@@ -3,15 +3,15 @@
 
 PKG             := giflib
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 5.0.5
-$(PKG)_CHECKSUM := 926fecbcef1c5b1ca9d17257d15a197b8b35e405
+$(PKG)_VERSION  := 5.1.4
+$(PKG)_CHECKSUM := df27ec3ff24671f80b29e6ab1c4971059c14ac3db95406884fc26574631ba8d5
 $(PKG)_SUBDIR   := giflib-$($(PKG)_VERSION)
 $(PKG)_FILE     := giflib-$($(PKG)_VERSION).tar.bz2
-$(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/giflib/giflib-5.x/$($(PKG)_FILE)
+$(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/giflib/$($(PKG)_FILE)
 $(PKG)_DEPS     := gcc
 
 define $(PKG)_UPDATE
-    $(WGET) -q -O- 'http://sourceforge.net/projects/giflib/files/giflib-5.x/' | \
+    $(WGET) -q -O- 'http://sourceforge.net/projects/giflib/files/' | \
     grep '<a href.*giflib.*bz2/download' | \
     $(SED) -n 's,.*giflib-\([0-9][^>]*\)\.tar.*,\1,p' | \
     head -1

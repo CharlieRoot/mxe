@@ -3,12 +3,12 @@
 
 PKG             := boost
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.57.0
-$(PKG)_CHECKSUM := e151557ae47afd1b43dc3fac46f8b04a8fe51c12
+$(PKG)_VERSION  := 1.60.0
+$(PKG)_CHECKSUM := 686affff989ac2488f79a97b9479efb9f2abae035b5ed4d8226de6857933fd3b
 $(PKG)_SUBDIR   := boost_$(subst .,_,$($(PKG)_VERSION))
 $(PKG)_FILE     := boost_$(subst .,_,$($(PKG)_VERSION)).tar.bz2
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/boost/boost/$($(PKG)_VERSION)/$($(PKG)_FILE)
-$(PKG)_DEPS     := gcc zlib bzip2 expat icu4c
+$(PKG)_DEPS     := gcc bzip2 expat zlib icu4c
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'http://www.boost.org/users/download/' | \
@@ -36,6 +36,7 @@ define $(PKG)_BUILD
         -j '$(JOBS)' \
         --ignore-site-config \
         --user-config=user-config.jam \
+        abi=ms \
         address-model=$(BITS) \
         architecture=x86 \
         binary-format=pe \
@@ -45,7 +46,9 @@ define $(PKG)_BUILD
         target-os=windows \
         threadapi=win32 \
         threading=multi \
+        variant=release \
         toolset=gcc-mxe \
+        cxxflags=$(if $(findstring posix,$(MXE_GCC_THREADS)),-std=gnu++11,-std=gnu++98) \
         --layout=tagged \
         --without-context \
         --without-coroutine \
@@ -70,8 +73,7 @@ define $(PKG)_BUILD
         mv -fv '$(PREFIX)/$(TARGET)/lib/'libboost_*.dll '$(PREFIX)/$(TARGET)/bin/')
 
     # setup cmake toolchain
-    $(SED) -i '/Boost_THREADAPI/d' '$(CMAKE_TOOLCHAIN_FILE)'
-    echo 'set(Boost_THREADAPI "win32")' >> '$(CMAKE_TOOLCHAIN_FILE)'
+    echo 'set(Boost_THREADAPI "win32")' > '$(CMAKE_TOOLCHAIN_DIR)/$(PKG).cmake'
 
     '$(TARGET)-g++' \
         -W -Wall -Werror -ansi -U__STRICT_ANSI__ -pedantic \
@@ -81,4 +83,12 @@ define $(PKG)_BUILD
         -lboost_thread_win32-mt \
         -lboost_system-mt \
         -lboost_chrono-mt
+
+    # test cmake
+    mkdir '$(1).test-cmake'
+    cd '$(1).test-cmake' && '$(TARGET)-cmake' \
+        -DPKG=$(PKG) \
+        -DPKG_VERSION=$($(PKG)_VERSION) \
+        '$(PWD)/src/cmake/test'
+    $(MAKE) -C '$(1).test-cmake' -j 1 install
 endef

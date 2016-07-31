@@ -6,8 +6,8 @@
 
 PKG             := fdk-aac
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 0.1.3
-$(PKG)_CHECKSUM := fda64beee7f3b8e04ca209efcf9354cdae9afc33
+$(PKG)_VERSION  := 0.1.4
+$(PKG)_CHECKSUM := 5910fe788677ca13532e3f47b7afaa01d72334d46a2d5e1d1f080f1173ff15ab
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := http://$(SOURCEFORGE_MIRROR)/project/opencore-amr/$(PKG)/$($(PKG)_FILE)
@@ -22,7 +22,8 @@ endef
 
 define $(PKG)_BUILD
     cd '$(1)' && ./configure \
-        $(MXE_CONFIGURE_OPTS)
+        $(MXE_CONFIGURE_OPTS) \
+        CXXFLAGS='-Wno-narrowing'
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     $(MAKE) -C '$(1)' -j 1 install
 endef

@@ -3,11 +3,12 @@
 
 PKG             := cmake
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.0.2
-$(PKG)_CHECKSUM := 379472e3578902a1d6f8b68a9987773151d6f21a
+$(PKG)_VERSION  := 3.5.2
+$(PKG)_CHECKSUM := 92d8410d3d981bb881dfff2aed466da55a58d34c7390d50449aa59b32bb5e62a
 $(PKG)_SUBDIR   := cmake-$($(PKG)_VERSION)
 $(PKG)_FILE     := cmake-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := http://www.cmake.org/files/v$(call SHORT_PKG_VERSION,$(PKG))/$($(PKG)_FILE)
+$(PKG)_TARGETS  := $(BUILD)
 $(PKG)_DEPS     :=
 
 define $(PKG)_UPDATE

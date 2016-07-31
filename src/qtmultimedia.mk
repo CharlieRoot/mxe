@@ -4,7 +4,7 @@
 PKG             := qtmultimedia
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION   = $(qtbase_VERSION)
-$(PKG)_CHECKSUM := a66fe5538f554957f60fc160121a3b0e7e72753b
+$(PKG)_CHECKSUM := 05ae705bda224a600b06e390aa7b1448c4a6a52d2d37842d2121fb4a5d84b559
 $(PKG)_SUBDIR    = $(subst qtbase,qtmultimedia,$(qtbase_SUBDIR))
 $(PKG)_FILE      = $(subst qtbase,qtmultimedia,$(qtbase_FILE))
 $(PKG)_URL       = $(subst qtbase,qtmultimedia,$(qtbase_URL))
@@ -19,4 +19,3 @@ define $(PKG)_BUILD
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     $(MAKE) -C '$(1)' -j 1 install
 endef
-

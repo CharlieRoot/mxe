@@ -3,26 +3,24 @@
 
 PKG             := mman-win32
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3421c28e753c38d24a2e27c111b1c9b4601ebe7d
-$(PKG)_CHECKSUM := c33e84043d49d0e33bc434bda3a16ce60432e789
-$(PKG)_SUBDIR   := mman-win32-master
-$(PKG)_FILE     := mman-win32-$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := https://github.com/witwall/mman-win32/archive/master.tar.gz
+$(PKG)_VERSION  := b7ec370
+$(PKG)_CHECKSUM := 6f94db28ddf30711c7b227e97c5142f72f77aca2c5cc034a7d012db242cc2f7b
+$(PKG)_SUBDIR   := witwall-mman-win32-$($(PKG)_VERSION)
+$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
+$(PKG)_URL      := https://github.com/witwall/mman-win32/tarball/$($(PKG)_VERSION)/$($(PKG)_FILE)
 $(PKG)_DEPS     := gcc
 
-define $(PKG)_UPDATE
-    echo 'TODO: Updates for package mman-win32 need to be written.' >&2;
-    echo $(mman-win32_VERSION)
-endef
+$(PKG)_UPDATE = $(call MXE_GET_GITHUB_SHA, witwall/mman-win32, master) | $(SED) 's/^\(.......\).*/\1/;'
 
 define $(PKG)_BUILD
-    cd '$(1)' && chmod +x configure
-    cd '$(1)' && ./configure \
-        --cross-prefix='$(TARGET)'- \
-        $(if $(BUILD_STATIC),--enable-static ) \
-        --prefix='$(PREFIX)/$(TARGET)' \
-        --libdir='$(PREFIX)/$(TARGET)/lib' \
-        --incdir='$(PREFIX)/$(TARGET)/include/sys'
-    $(MAKE) -C '$(1)' -j 1
-    $(MAKE) -C '$(1)' -j 1 install
+    mkdir '$(1).build'
+    cd    '$(1).build' && '$(TARGET)-cmake' '$(1)'\
+        -DBUILD_TESTS=OFF \
+        $(if $(BUILD_STATIC),-DBUILD_SHARED_LIBS=OFF)
+    $(MAKE) -C '$(1).build' -j '$(JOBS)'
+    $(MAKE) -C '$(1).build' -j 1 install
+
+    '$(TARGET)-gcc' -W -Wall \
+        '$(1)/test.c' -o '$(PREFIX)/$(TARGET)/bin/test-$(PKG).exe' \
+        -lmman
 endef

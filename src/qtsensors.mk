@@ -4,7 +4,7 @@
 PKG             := qtsensors
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION   = $(qtbase_VERSION)
-$(PKG)_CHECKSUM := 5fe798541707acfe7a4955076a0d27d8d58f4d15
+$(PKG)_CHECKSUM := 283dcc66a24c4367e865fa8301b6ea04d0cb78bd0f166fd09a6bb42e1e3731be
 $(PKG)_SUBDIR    = $(subst qtbase,qtsensors,$(qtbase_SUBDIR))
 $(PKG)_FILE      = $(subst qtbase,qtsensors,$(qtbase_FILE))
 $(PKG)_URL       = $(subst qtbase,qtsensors,$(qtbase_URL))
@@ -19,4 +19,3 @@ define $(PKG)_BUILD
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     $(MAKE) -C '$(1)' -j 1 install
 endef
-

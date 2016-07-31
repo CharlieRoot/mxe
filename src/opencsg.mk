@@ -3,8 +3,8 @@
 
 PKG             := opencsg
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.3.2
-$(PKG)_CHECKSUM := e2b4abf169ae3e319eb5f6d9ae6136fa96710a05
+$(PKG)_VERSION  := 1.4.0
+$(PKG)_CHECKSUM := ecb46be54cfb8a338d2a9b62dec90ec8da6c769078c076f58147d4a6ba1c878d
 $(PKG)_SUBDIR   := OpenCSG-$($(PKG)_VERSION)
 $(PKG)_FILE     := OpenCSG-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := http://www.opencsg.org/$($(PKG)_FILE)

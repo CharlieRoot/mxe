@@ -4,7 +4,7 @@
 PKG             := libzip
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 0.11.2
-$(PKG)_CHECKSUM := da86a7b4bb2b7ab7c8c5fb773f8a48a5adc7a405
+$(PKG)_CHECKSUM := 7cfbbc2c540e154b933b6e9ec781e2671086bd8114eb744ae1a1ade34d2bb6bb
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := http://www.nih.at/libzip/$($(PKG)_FILE)
@@ -18,9 +18,7 @@ endef
 
 define $(PKG)_BUILD
     cd '$(1)' && ./configure \
-        --host='$(TARGET)' \
-        --prefix='$(PREFIX)/$(TARGET)' \
-        --disable-shared
+        $(MXE_CONFIGURE_OPTS)
     $(MAKE) -C '$(1)' -j '$(JOBS)' install $(MXE_DISABLE_CRUFT) SUBDIRS=lib
 
     '$(TARGET)-gcc' \
@@ -28,5 +26,3 @@ define $(PKG)_BUILD
         '$(2).c' -o '$(PREFIX)/$(TARGET)/bin/test-libzip.exe' \
         `'$(TARGET)-pkg-config' libzip --cflags --libs`
 endef
-
-$(PKG)_BUILD_SHARED =
